@@ -182,12 +182,29 @@ public class MeasureRuler implements Ruler
 				b4pmeasure.setEnabled(true);
 			}
 			
+			int beginMeasureLength;
 			public void mousePressed(MouseEvent e)
 			{
 				if(e.getButton() == MouseEvent.BUTTON1)
+				{
 					p = e.getPoint();
+					ruler.addMouseMotionListener(this);
+					beginMeasureLength = measureLength;
+				}
 				else if(e.getButton() == MouseEvent.BUTTON3)
 					menu.show(ruler, e.getX(), e.getY());
+			}
+			
+			protected void resetMeasureLength(MouseEvent e)
+			{
+				int newTranslate = e.getPoint().x - p.x;
+				setMeasureLength(beginMeasureLength + newTranslate);
+			}
+			
+			public void mouseDragged(MouseEvent e)
+			{
+				if(p != null)
+					resetMeasureLength(e);
 			}
 			
 			public void mouseReleased(MouseEvent e)
@@ -195,8 +212,8 @@ public class MeasureRuler implements Ruler
 				if(e.getButton() == MouseEvent.BUTTON1)
 					if(p != null)
 					{
-						int newTranslate = e.getPoint().x - p.x;
-						setMeasureLength(measureLength + newTranslate);
+						this.resetMeasureLength(e);
+						ruler.removeMouseMotionListener(this);
 						p = null;
 					}
 			}			

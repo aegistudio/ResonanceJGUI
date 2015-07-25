@@ -31,10 +31,7 @@ public abstract class RenamableLabel extends JPanel
 			public void mouseClicked(MouseEvent click)
 			{
 				if(click.getClickCount() >= 2)
-				{
-					nameLabel.setVisible(false);
-					renameField.setVisible(true);
-				}
+					beginRename();
 			}
 		});
 		
@@ -66,6 +63,12 @@ public abstract class RenamableLabel extends JPanel
 			}			
 		});
 		super.add(this.renameField);
+	}
+	
+	public void beginRename()
+	{
+		nameLabel.setVisible(false);
+		renameField.setVisible(true);
 	}
 	
 	public void paint(Graphics g)

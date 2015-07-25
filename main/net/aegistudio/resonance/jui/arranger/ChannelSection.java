@@ -111,6 +111,11 @@ public abstract class ChannelSection extends JPanel
 		g.drawRect(-1, 0, getWidth() + 1, getHeight() - 1);
 	}
 	
+	public void beginRename()
+	{
+		this.name.beginRename();
+	}
+	
 	public String getChannelName()
 	{
 		return this.name.getName();

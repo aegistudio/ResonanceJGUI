@@ -46,7 +46,8 @@ public class Arranger extends JFrame
 				sectionPanel.addMouseListener(new MouseAdapter(){
 					public void mousePressed(MouseEvent me)
 					{
-						arrangeMenu.show(sectionPanel, me.getX(), me.getY());
+						if(me.getButton() == MouseEvent.BUTTON3)
+							arrangeMenu.show(sectionPanel, me.getX(), me.getY());
 					}
 				});
 			}

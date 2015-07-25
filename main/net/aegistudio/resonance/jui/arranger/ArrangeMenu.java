@@ -21,6 +21,7 @@ public class ArrangeMenu extends JPopupMenu{
 	protected JMenuItem newAutomation;
 	
 	protected JMenuItem eraseChannel;
+	protected JMenuItem renameChannel;
 	
 	public ArrangeMenu(final ArrangerModel arrangerModel)
 	{
@@ -28,7 +29,6 @@ public class ArrangeMenu extends JPopupMenu{
 		arrangeTitle.setForeground(Color.ORANGE.darker());
 		arrangeTitle.setEnabled(false);
 		this.add(arrangeTitle);
-		
 		this.add(new JSeparator());
 		
 		newInstrumentChannel = new JMenuItem("Create Instrument");
@@ -60,7 +60,7 @@ public class ArrangeMenu extends JPopupMenu{
 			public void actionPerformed(ActionEvent arg0) {
 				if(target != null)
 				{
-					int selection = JOptionPane.showConfirmDialog(target, "Are you sure to erase the channel (can't be undo).", "Erasure confirm",
+					int selection = JOptionPane.showConfirmDialog(target, String.format("Are you sure to erase the channel %s (can't be undo)?", target.getChannelName()), "Erasure confirm",
 							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if(selection == JOptionPane.YES_OPTION)
 						arrangerModel.removeChannel(target);
@@ -68,6 +68,17 @@ public class ArrangeMenu extends JPopupMenu{
 			}
 		});
 		this.add(eraseChannel);
+		
+		renameChannel = new JMenuItem("Rename Channel");
+		renameChannel.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(target != null)
+					target.beginRename();
+			}
+		});
+		this.add(renameChannel);
 	}
 	
 	ChannelSection target = null;
@@ -77,8 +88,13 @@ public class ArrangeMenu extends JPopupMenu{
 		{
 			target = (ChannelSection) c.getComponentAt(x, y);
 			eraseChannel.setEnabled(true);
+			renameChannel.setEnabled(true);
 		}
-		else eraseChannel.setEnabled(false);
+		else
+		{
+			eraseChannel.setEnabled(false);
+			renameChannel.setEnabled(false);
+		}
 		super.show(c, x, y);
 	}
 }
