@@ -30,7 +30,7 @@ public class RandomPanel extends Container implements Slideshow
 			int heightTemp = l.y + s.height;
 			
 			if(widthTemp > width) width = widthTemp;
-			if(widthTemp > height) height = heightTemp;
+			if(heightTemp > height) height = heightTemp;
 		}
 		this.preferredSize.width = width;
 		this.preferredSize.height = height;

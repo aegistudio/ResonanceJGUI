@@ -10,75 +10,44 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
 
+import net.aegistudio.resonance.channel.Clip;
+import net.aegistudio.resonance.measure.Measurable;
+import net.aegistudio.resonance.measure.MeasureRuler;
+import net.aegistudio.resonance.measure.MeasuredPanel;
+
 @SuppressWarnings("serial")
-public abstract class ClipComponent extends Component
+public class ClipComponent extends Component implements Measurable
 {
 	protected final ArrangerModel model;
 	
 	protected final JLabel clipDenotation = new JLabel();
+
+	protected int potentialCode = 0;
 	
+	MouseAdapter cursorAdapter;
 	MouseAdapter mouseAdapter;
 	
 	Cursor defaultCursor;
-	Cursor trimCursor;
-	Cursor moveCursor;
+	static Cursor trimCursor = new Cursor(Cursor.E_RESIZE_CURSOR);
+	static Cursor moveCursor = new Cursor(Cursor.MOVE_CURSOR);
 	
-	public ClipComponent(ArrangerModel model)
+	public double offset;
+	public final Clip clip;
+	public final MeasureRuler ruler;
+	
+	public ClipComponent(ArrangerModel model, final ChannelSection channel, double initialOffset, Clip clip, MeasureRuler ruler)
 	{
 		this.model = model;
+		this.clip = clip;
+		this.offset = initialOffset;
+		this.ruler = ruler;
+		
 		this.clipDenotation.setOpaque(false);
 		
 		this.clipDenotation.setFont(getFont());
 		
-		this.trimCursor = new Cursor(Cursor.E_RESIZE_CURSOR);
-		this.moveCursor = new Cursor(Cursor.MOVE_CURSOR);
-		
-		mouseAdapter = new MouseAdapter()
-		{
-			public void mouseEntered(MouseEvent e)
-			{
-				defaultCursor = getCursor();
-				addMouseMotionListener(mouseAdapter);
-			}
-			
-			public void mouseExited(MouseEvent e)
-			{
-				setCursor(defaultCursor);
-			}
-			
-			Dimension originalSize;
-			Point beginPoint;
-			Point pointOnScreen;
-			
-			public void mousePressed(MouseEvent event)
-			{
-				originalSize = getPreferredSize();
-				beginPoint = getLocation();
-				pointOnScreen = event.getLocationOnScreen();
-				addMouseMotionListener(mouseAdapter);
-			}
-			
-			public void mouseReleased(MouseEvent event)
-			{
-				try
-				{
-					if(potentialCode == 0)
-						move(getX() - beginPoint.x);
-					else if(potentialCode == 1)
-						trim(-(getPreferredSize().width - originalSize.width), 0);
-					else if(potentialCode == 2)
-						trim(0, (getPreferredSize().width - originalSize.width));						
-				}
-				catch(Exception e)
-				{
-					setPreferredSize(originalSize);
-					setLocation(beginPoint);
-				}
-				removeMouseMotionListener(mouseAdapter);
-			}
-			
-			protected int potentialCode = 0;
-			
+		cursorAdapter = new MouseAdapter()
+		{	
 			public void mouseMoved(MouseEvent me)
 			{
 				if(me.getX() <= cornerSize)
@@ -97,15 +66,74 @@ public abstract class ClipComponent extends Component
 					potentialCode = 0;
 				}
 			}
+		};
+		
+		this.addMouseMotionListener(cursorAdapter);
+		
+		mouseAdapter = new MouseAdapter()
+		{
+			public void mouseEntered(MouseEvent e)
+			{
+				defaultCursor = getCursor();
+			}
+			
+			public void mouseExited(MouseEvent e)
+			{
+				setCursor(defaultCursor);
+			}
+			
+			int processCode = 0;
+			Dimension originalSize;
+			Point beginPoint;
+			Point pointOnScreen;
+			
+			public void mousePressed(MouseEvent event)
+			{
+				if(event.getButton() == MouseEvent.BUTTON1)
+				{
+					processCode = potentialCode;
+					originalSize = getPreferredSize();
+					beginPoint = getLocation();
+					pointOnScreen = event.getLocationOnScreen();
+					addMouseMotionListener(mouseAdapter);
+				}
+				else if(event.getButton() == MouseEvent.BUTTON3)
+					model.removeClip(channel, ClipComponent.this);
+			}
+			
+			public void mouseReleased(MouseEvent event)
+			{
+				if(event.getButton() == MouseEvent.BUTTON1)
+				{
+					try
+					{
+						if(processCode == 0)
+							offset = model.move(ClipComponent.this, ruler.getBeat(getX() - beginPoint.x));
+						else if(processCode == 1)
+							offset = model.trim(ClipComponent.this, - ruler.getBeat((getPreferredSize().width - originalSize.width)), 0);
+						else if(processCode == 2)
+							offset = model.trim(ClipComponent.this, 0, ruler.getBeat(getPreferredSize().width - originalSize.width));
+						
+						if(getParent() instanceof MeasuredPanel)
+							((MeasuredPanel) getParent()).recalculateMeasure();
+					}
+					catch(Exception e)
+					{
+						setPreferredSize(originalSize);
+						setLocation(beginPoint);
+					}
+					removeMouseMotionListener(mouseAdapter);
+				}
+			}
 			
 			public void mouseDragged(MouseEvent me)
 			{
-				if(potentialCode == 0)
+				if(processCode == 0)
 				{
 					//Move
 					setLocation(beginPoint.x + me.getLocationOnScreen().x - pointOnScreen.x, beginPoint.y);
 				}
-				else if(potentialCode == 1)
+				else if(processCode == 1)
 				{
 					if(me.getLocationOnScreen().x - pointOnScreen.x + 1 < originalSize.width)
 					{
@@ -114,7 +142,7 @@ public abstract class ClipComponent extends Component
 						setSize(new Dimension(originalSize.width - (me.getLocationOnScreen().x - pointOnScreen.x), originalSize.height));
 					}
 				}
-				else if(potentialCode == 2)
+				else if(processCode == 2)
 				{
 					if(originalSize.width + me.getLocationOnScreen().x - pointOnScreen.x > 1)
 					{
@@ -153,7 +181,13 @@ public abstract class ClipComponent extends Component
 		this.clipDenotation.paint(g.create(4, 2, getWidth(), 20));
 	}
 	
-	protected abstract void move(int deltaX) throws Exception;
+	public double start()
+	{
+		return this.offset;
+	}
 	
-	protected abstract void trim(int deltaX, int deltaSize) throws Exception;
+	public double duration()
+	{
+		return this.clip.getLength();
+	}
 }

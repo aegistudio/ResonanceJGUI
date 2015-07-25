@@ -20,7 +20,36 @@ import net.aegistudio.scroll.RandomPanel;
 import net.aegistudio.scroll.RowPanel;
 import net.aegistudio.scroll.ScrollPane;
 
+@SuppressWarnings("serial")
+class MeasuredBlock extends Component implements Measurable
+{
+	public double begin;
+	public double end;
+	protected MeasuredBlock(double begin, double end)
+	{
+		this.begin = begin;
+		this.end = end;
+	}
+
+	@Override
+	public double start() {
+		return begin;
+	}
+
+	@Override
+	public double duration() {
+		return end;
+	}
+	
+	public void paint(Graphics g)
+	{
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, getWidth(), getHeight());
+	}
+}
+
 public class ScrollTest {
+	
 	static RowPanel content;
 	
 	@SuppressWarnings("serial")
@@ -32,45 +61,9 @@ public class ScrollTest {
 		
 		content = new RowPanel();
 		
-		final Measurable black1 = new Measurable()
-		{
-
-			@Override
-			public double start() {
-				return 0.0;
-			}
-
-			@Override
-			public double duration() {
-				return 4.0;
-			}
-			
-			public void paint(Graphics g)
-			{
-				g.setColor(Color.BLACK);
-				g.fillRect(0, 0, getWidth(), getHeight());
-			}
-		};
+		final Component black1 = new MeasuredBlock(0, 4);
 		
-		final Measurable black2 = new Measurable()
-		{
-
-			@Override
-			public double start() {
-				return 5.0;
-			}
-
-			@Override
-			public double duration() {
-				return 5.0;
-			}
-			
-			public void paint(Graphics g)
-			{
-				g.setColor(Color.BLACK);
-				g.fillRect(0, 0, getWidth(), getHeight());
-			}
-		};
+		final Component black2 = new MeasuredBlock(5, 5);
 		
 		Content aRow = new Content()
 		{	

@@ -29,8 +29,8 @@ public abstract class ChannelSection extends JPanel
 	
 	public ChannelStrip parent;
 	
-	protected JLabel mute;
-	protected JLabel solo;
+	public final JLabel mute;
+	public final JLabel solo;
 	
 	public ChannelSection(final ArrangerModel model, String channelName, Channel channel)
 	{	

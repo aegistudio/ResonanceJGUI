@@ -9,9 +9,12 @@ import net.aegistudio.resonance.channel.Channel;
 import net.aegistudio.resonance.channel.Clip;
 import net.aegistudio.resonance.channel.MidiChannel;
 import net.aegistudio.resonance.channel.Score;
+import net.aegistudio.resonance.channel.ScoreClip;
 import net.aegistudio.resonance.jui.arranger.ArrangerModel;
 import net.aegistudio.resonance.jui.arranger.ChannelSection;
 import net.aegistudio.resonance.jui.arranger.ChannelStrip;
+import net.aegistudio.resonance.jui.arranger.ClipComponent;
+import net.aegistudio.resonance.jui.arranger.ClipStrip;
 import net.aegistudio.resonance.jui.arranger.InstrumentSection;
 import net.aegistudio.resonance.measure.MeasureRuler;
 import net.aegistudio.resonance.measure.MeasuredPanel;
@@ -70,14 +73,25 @@ public class ArrangerModelDecoy implements ArrangerModel
 		this.createChannelUI(channelName, channel);
 	}
 	
+	@SuppressWarnings("serial")
 	protected void createChannelUI(String channelName, Channel channel)
 	{
 		ChannelSection channelSection = null;
-		
-		MeasuredPanel clips = new MeasuredPanel(ruler, this.channelPane.getSectionScroll());
+		ClipStrip clips = null;
 		
 		if(channel instanceof MidiChannel)
+		{
 			channelSection = new InstrumentSection(this, channelName, channel);
+		
+			clips = new ClipStrip(this, ruler, channelSection){
+				
+				@Override
+				protected boolean accept(Object resource) {
+					if(resource == null) return false;
+					else return resource instanceof ScoreClip;
+				}
+			};
+		}
 		
 		channelPane.addRowContent(channelSection.parent = new ChannelStrip(channelSection, clips));
 	}
@@ -99,8 +113,12 @@ public class ArrangerModelDecoy implements ArrangerModel
 	}
 
 	@Override
-	public void removeClip(Channel channel, Clip clip) {
-		
+	public void removeClip(ChannelSection channel, ClipComponent clip) {
+		System.out.println("remove");
+		((MeasuredPanel)channel.parent.getMainScroll())
+			.remove(clip);
+		((MeasuredPanel)channel.parent.getMainScroll())
+			.recalculateMeasure();
 	}
 
 	@Override
@@ -119,7 +137,7 @@ public class ArrangerModelDecoy implements ArrangerModel
 	}
 
 	@Override
-	public String[] getInstrumentTracks() {
+	public String[] getTargerTracks() {
 		return null;
 	}
 
@@ -140,6 +158,45 @@ public class ArrangerModelDecoy implements ArrangerModel
 		this.channelPane = channelPane;
 		this.clipPane = clipPane;
 		this.ruler = ruler;
+	}
+
+	@Override
+	public Clip current() {
+		return new ScoreClip(scoreHolder)
+		{
+			{
+				this.setScore("Verse");
+				this.clipLength = 1.0;
+			}
+		};
+	}
+
+	@SuppressWarnings("serial")
+	@Override
+	public void insertClip(ChannelSection channel, double location)
+	{
+		System.out.println("insert!" + location);
+		((MeasuredPanel)channel.parent.getMainScroll())
+			.add(new ClipComponent(this, channel, location, current(), ruler)
+			{
+				{
+					this.clipDenotation.setText(((ScoreClip)current()).getScore());
+				}
+			});
+		((MeasuredPanel)channel.parent.getMainScroll())
+			.recalculateMeasure();
+	}
+
+	@Override
+	public double trim(ClipComponent clip, double offset, double length) {
+		ScoreClip sclip = (ScoreClip)clip.clip;
+		(sclip).trim(sclip.getLength() + length, sclip.getLength() + offset);
+		return clip.start() + offset;
+	}
+
+	@Override
+	public double move(ClipComponent clip, double delta) {
+		return clip.start() + delta;
 	}
 
 }

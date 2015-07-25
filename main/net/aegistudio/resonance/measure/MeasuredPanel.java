@@ -18,16 +18,6 @@ public class MeasuredPanel extends RandomPanel
 		this.sectionPanel = sectionPanel;
 	}
 	
-	public Component add(Component c)
-	{
-		if(c instanceof Measurable)
-		{
-			super.add(c);
-			return c;
-		}
-		else return null;
-	}
-	
 	public void recalculateMeasure()
 	{
 		for(Component c : this.getComponents())

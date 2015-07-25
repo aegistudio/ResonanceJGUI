@@ -61,6 +61,7 @@ public class MeasureRuler implements Ruler
 		return (int) (beatLength * measureLength / beatPerMeasure);
 	}
 	
+	/** Quantization Is Used Here! **/
 	public double getBeat(int location)
 	{
 		return 1.0 * location / measureLength * beatPerMeasure;

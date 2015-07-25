@@ -73,7 +73,7 @@ public class Main extends JFrame
 				while(true) try
 				{
 					arranger.repaint();
-					Thread.sleep(100L);
+					Thread.sleep(20L);
 				}
 				catch(Exception e)
 				{

@@ -4,29 +4,52 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
+import net.aegistudio.resonance.channel.Clip;
 import net.aegistudio.resonance.jui.arranger.ClipComponent;
+import net.aegistudio.resonance.measure.MeasureRuler;
+import net.aegistudio.resonance.plugin.Event;
+import net.aegistudio.resonance.serial.Structure;
 
 public class ClipComponentTest {
-	@SuppressWarnings("serial")
 	public static void main(String[] arguments) throws InterruptedException
 	{
-		ClipComponent clipComponent = new ClipComponent(new ArrangerModelDecoy())
-		{
-			{
-				this.clipDenotation.setText("Clip");
+		ClipComponent clipComponent = new ClipComponent(new ArrangerModelDecoy(), null, 0, new Clip(){
+
+			@Override
+			public void load(Structure input) {
+				// TODO Auto-generated method stub
+				
 			}
 
 			@Override
-			protected void move(int deltaX) throws Exception {
-				System.out.println(deltaX);
+			public void save(Structure output) {
+				// TODO Auto-generated method stub
+				
 			}
 
 			@Override
-			protected void trim(int deltaX, int deltaSize) throws Exception {
-				System.out.println(deltaX);
-				System.out.println(deltaSize);
+			public double getLength() {
+				return 1;
 			}
-		};
+
+			@Override
+			public Event[] getEvents(double begin, double ends, int samplesPerFrame) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Event[] offload(int samplesPerFrame) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public double getOffset() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+		}, new MeasureRuler());
 		
 		clipComponent.setBackground(Color.GREEN.darker());
 		clipComponent.setForeground(Color.YELLOW);

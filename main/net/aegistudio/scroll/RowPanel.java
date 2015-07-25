@@ -26,7 +26,7 @@ public class RowPanel implements Content
 		{
 			Dimension size = super.getPreferredSize();
 			if(size.height < sectionPanel.getPreferredSize().height)
-				size.height = sectionPanel.getPreferredSize().height;
+				size.height = sectionPanel.getPreferredSize().height;			
 			return size;
 		};
 	};
