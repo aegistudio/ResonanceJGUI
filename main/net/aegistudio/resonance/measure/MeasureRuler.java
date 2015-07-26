@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -60,11 +62,51 @@ public class MeasureRuler implements Ruler
 	{
 		return (int) (beatLength * measureLength / beatPerMeasure);
 	}
+
+	protected final Set<Quantization> quantizations = new HashSet<Quantization>();
+	
+	protected Quantization quantizationMethod;
 	
 	/** Quantization Is Used Here! **/
+	@SuppressWarnings("serial")
+	abstract class Quantization extends JMenuItem
+	{
+		protected Quantization(String method)
+		{
+			super(method);
+			quantizations.add(this);
+			this.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					for(Quantization quantization : quantizations)
+						quantization.setEnabled(true);
+					setEnabled(false);
+					quantizationMethod = Quantization.this;
+				}
+			});
+		}
+		protected abstract double quantize(double beat);
+	}
+	
+	@SuppressWarnings("serial")
+	class BeatQuantization extends Quantization
+	{
+		protected final int count;
+		public BeatQuantization(String method, int count)
+		{
+			super(method);
+			this.count = count;
+		}
+		@Override
+		protected double quantize(double beat) {
+			return (1.0 * Math.round(beat * count)) / count;
+		}
+	}
+	
 	public double getBeat(int location)
 	{
-		return 1.0 * location / measureLength * beatPerMeasure;
+		return quantizationMethod.quantize(1.0 * location / measureLength * beatPerMeasure);
 	}
 	
 	int measureLengthMinimal = 30;
@@ -83,6 +125,32 @@ public class MeasureRuler implements Ruler
 			JMenuItem b4pmeasure = new JMenuItem("4 / Measure");
 			JMenuItem customize = new JMenuItem("Customize...");
 			
+			JMenuItem quantization = new JMenuItem("Quantization");
+			
+			@SuppressWarnings("serial")
+			Quantization none = new Quantization("None")
+			{
+				@Override
+				protected double quantize(double beat) {
+					return beat;
+				}	
+			};
+			
+			Quantization beat = new BeatQuantization("Beat", 1);
+			Quantization beat1_2 = new BeatQuantization("1/2 Beat", 2);
+			Quantization beat1_3 = new BeatQuantization("1/3 Beat", 3);
+			Quantization beat1_4 = new BeatQuantization("1/4 Beat", 4);
+			Quantization beat1_6 = new BeatQuantization("1/6 Beat", 6);
+			
+			@SuppressWarnings("serial")
+			Quantization measure = new Quantization("Measure")
+			{
+				@Override
+				protected double quantize(double beat) {
+					return Math.round(beat / beatPerMeasure) * beatPerMeasure;
+				}	
+			};
+			
 			{
 				rhythmPattern.setForeground(Color.GREEN.darker().darker());
 				rhythmPattern.setEnabled(false);
@@ -95,8 +163,32 @@ public class MeasureRuler implements Ruler
 				menu.add(new JSeparator());
 				
 				menu.add(customize);
+			
+				menu.add(new JSeparator());
+				menu.add(new JSeparator());
+				
+				quantization.setForeground(Color.RED.darker().darker());
+				quantization.setEnabled(false);
+				menu.add(quantization);
+
+				menu.add(new JSeparator());
+				menu.add(none);
+				
+				menu.add(new JSeparator());
+				
+				menu.add(beat);
+				menu.add(beat1_2);
+				menu.add(beat1_3);
+				menu.add(beat1_4);
+				menu.add(beat1_6);
+				
+				menu.add(new JSeparator());
+				menu.add(measure);
 				
 				b4pmeasure.setEnabled(false);
+				
+				quantizationMethod = beat;
+				beat.setEnabled(false);
 				
 				b2pmeasure.addActionListener(new ActionListener()
 				{
@@ -105,7 +197,7 @@ public class MeasureRuler implements Ruler
 					public void actionPerformed(ActionEvent arg0) {
 						setMeasureLength(measureLength * 2 / beatPerMeasure);
 						beatPerMeasure = 2;
-						enableAll();
+						enableAllPattern();
 						b2pmeasure.setEnabled(false);
 					}
 				});
@@ -117,7 +209,7 @@ public class MeasureRuler implements Ruler
 					public void actionPerformed(ActionEvent arg0) {
 						setMeasureLength(measureLength * 3 / beatPerMeasure);
 						beatPerMeasure = 3;
-						enableAll();
+						enableAllPattern();
 						b3pmeasure.setEnabled(false);
 					}
 				});
@@ -129,7 +221,7 @@ public class MeasureRuler implements Ruler
 					public void actionPerformed(ActionEvent arg0) {
 						setMeasureLength(measureLength * 4 / beatPerMeasure);
 						beatPerMeasure = 4;
-						enableAll();
+						enableAllPattern();
 						b4pmeasure.setEnabled(false);
 					}
 				});
@@ -166,7 +258,7 @@ public class MeasureRuler implements Ruler
 								JOptionPane.showConfirmDialog(null, errorMessage,
 										"Not recognized beat(s) per measure!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 						}
-						enableAll();
+						enableAllPattern();
 						setMeasureLength(measureLength * value / beatPerMeasure);
 						beatPerMeasure = value;
 						if(beatPerMeasure == 2) b2pmeasure.setEnabled(false);
@@ -176,7 +268,7 @@ public class MeasureRuler implements Ruler
 					
 				});
 			}
-			protected void enableAll()
+			protected void enableAllPattern()
 			{
 				b2pmeasure.setEnabled(true);
 				b3pmeasure.setEnabled(true);

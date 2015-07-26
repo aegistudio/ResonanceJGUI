@@ -166,7 +166,7 @@ public class ArrangerModelDecoy implements ArrangerModel
 		{
 			{
 				this.setScore("Verse");
-				this.clipLength = 1.0;
+				this.clipLength = 4.0;
 			}
 		};
 	}
@@ -183,6 +183,7 @@ public class ArrangerModelDecoy implements ArrangerModel
 					this.clipDenotation.setText(((ScoreClip)current()).getScore());
 				}
 			});
+		
 		((MeasuredPanel)channel.parent.getMainScroll())
 			.recalculateMeasure();
 	}

@@ -26,9 +26,16 @@ public abstract class ClipStrip extends MeasuredPanel
 			Dimension preferredSize = new Dimension();
 			public Dimension getPreferredSize()
 			{
+				return preferredSize;
+			}
+			
+			public void paint(Graphics g)
+			{
 				preferredSize.width = ClipStrip.this.getParent().getWidth();
 				preferredSize.height = sectionPanel.getPreferredSize().height;
-				return preferredSize;
+				
+				g.setColor(Color.GRAY.brighter());
+				g.drawRect(-2, 0, getWidth() + 4, getHeight() - 1);
 			}
 		});
 		
@@ -48,13 +55,6 @@ public abstract class ClipStrip extends MeasuredPanel
 				else setCursor(normalCursor);
 			}
 		});
-	}
-	
-	public void paint(Graphics g)
-	{
-		g.setColor(Color.GRAY.brighter());
-		g.drawRect(-2, 0, getWidth() + 4, getHeight() - 1);
-		super.paint(g);
 	}
 	
 	protected abstract boolean accept(Object resource);
