@@ -8,8 +8,8 @@ import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import net.aegistudio.resonance.measure.MeasureRuler;
-import net.aegistudio.resonance.measure.MeasuredPanel;
+import net.aegistudio.resonance.jui.measure.MeasureRuler;
+import net.aegistudio.resonance.jui.measure.MeasuredPanel;
 
 @SuppressWarnings("serial")
 public abstract class ClipStrip extends MeasuredPanel

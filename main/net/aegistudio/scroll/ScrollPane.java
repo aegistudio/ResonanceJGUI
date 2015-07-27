@@ -72,8 +72,9 @@ public class ScrollPane extends JScrollPane
 			{
 				g.setColor(viewPanel.getBackground());
 				g.fillRect(0, 0, getWidth(), getHeight());
-				ruler.drawMainScroll(g);
+				ruler.predrawMainScroll(g);
 				content.getMainScroll().paint(g);
+				ruler.postdrawMainScroll(g);
 			}
 		};
 		this.ruler.init(rulerMeter, viewPanel);

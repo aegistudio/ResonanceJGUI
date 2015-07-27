@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import net.aegistudio.resonance.KeywordArray;
 import net.aegistudio.resonance.channel.Clip;
 import net.aegistudio.resonance.jui.arranger.ClipComponent;
-import net.aegistudio.resonance.measure.MeasureRuler;
+import net.aegistudio.resonance.jui.measure.MeasureRuler;
 import net.aegistudio.resonance.plugin.Event;
 import net.aegistudio.resonance.serial.Structure;
 

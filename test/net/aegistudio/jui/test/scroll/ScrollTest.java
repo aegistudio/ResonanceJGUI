@@ -12,9 +12,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
-import net.aegistudio.resonance.measure.Measurable;
-import net.aegistudio.resonance.measure.MeasureRuler;
-import net.aegistudio.resonance.measure.MeasuredPanel;
+import net.aegistudio.resonance.jui.measure.Measurable;
+import net.aegistudio.resonance.jui.measure.MeasureRuler;
+import net.aegistudio.resonance.jui.measure.MeasuredPanel;
 import net.aegistudio.scroll.Content;
 import net.aegistudio.scroll.RandomPanel;
 import net.aegistudio.scroll.RowPanel;

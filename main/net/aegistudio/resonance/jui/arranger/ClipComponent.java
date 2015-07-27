@@ -12,9 +12,9 @@ import javax.swing.JLabel;
 
 import net.aegistudio.resonance.KeywordArray.KeywordEntry;
 import net.aegistudio.resonance.channel.Clip;
-import net.aegistudio.resonance.measure.Measurable;
-import net.aegistudio.resonance.measure.MeasureRuler;
-import net.aegistudio.resonance.measure.MeasuredPanel;
+import net.aegistudio.resonance.jui.measure.Measurable;
+import net.aegistudio.resonance.jui.measure.MeasureRuler;
+import net.aegistudio.resonance.jui.measure.MeasuredPanel;
 
 @SuppressWarnings("serial")
 public class ClipComponent extends Component implements Measurable

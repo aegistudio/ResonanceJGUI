@@ -15,5 +15,7 @@ public interface Ruler
 	
 	public void drawRulerMeter(Graphics g);
 	
-	public void drawMainScroll(Graphics g);
+	public void predrawMainScroll(Graphics g);
+	
+	public void postdrawMainScroll(Graphics g);
 }

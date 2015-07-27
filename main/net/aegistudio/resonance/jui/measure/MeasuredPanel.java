@@ -1,4 +1,4 @@
-package net.aegistudio.resonance.measure;
+package net.aegistudio.resonance.jui.measure;
 
 import java.awt.Component;
 import java.awt.Dimension;

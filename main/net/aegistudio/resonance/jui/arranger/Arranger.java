@@ -8,8 +8,8 @@ import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 
 import net.aegistudio.resonance.jui.Main;
-import net.aegistudio.resonance.measure.MeasureRuler;
-import net.aegistudio.resonance.measure.MeasuredPanel;
+import net.aegistudio.resonance.jui.measure.MeasureRuler;
+import net.aegistudio.resonance.jui.measure.MeasuredPanel;
 import net.aegistudio.scroll.RowPanel;
 import net.aegistudio.scroll.ScrollPane;
 
@@ -21,7 +21,7 @@ public class Arranger extends JFrame
 	public final RowPanel channelPane;
 	public final MeasuredPanel clipPane;
 
-	public final MeasureRuler ruler = new MeasureRuler();
+	public final MeasureRuler ruler;
 	
 	JPopupMenu arrangeMenu;
 	
@@ -33,6 +33,7 @@ public class Arranger extends JFrame
 		this.model = model;
 		
 		this.arrangeMenu = new ArrangeMenu(model);
+		this.ruler = new TimingRuler(model);
 		
 		super.setTitle("Arranger");
 		super.setSize(800, 500);

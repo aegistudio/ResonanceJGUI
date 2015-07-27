@@ -3,7 +3,7 @@ package net.aegistudio.resonance.jui.arranger;
 import java.awt.Component;
 import java.awt.Dimension;
 
-import net.aegistudio.resonance.measure.MeasuredPanel;
+import net.aegistudio.resonance.jui.measure.MeasuredPanel;
 import net.aegistudio.scroll.Content;
 
 public class ChannelStrip implements Content

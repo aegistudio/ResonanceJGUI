@@ -1,4 +1,4 @@
-package net.aegistudio.resonance.measure;
+package net.aegistudio.resonance.jui.measure;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -24,7 +24,7 @@ public class MeasureRuler implements Ruler
 	
 	public int measureLength = 150;
 	
-	Component ruler, mainScroll;
+	protected Component ruler, mainScroll;
 	
 	@Override
 	public void drawRulerMeter(Graphics g) {
@@ -43,7 +43,7 @@ public class MeasureRuler implements Ruler
 	int quantizationThreashold = 25;
 	
 	@Override
-	public void drawMainScroll(Graphics g) {
+	public void predrawMainScroll(Graphics g) {
 		int xOffset = (int) (mainScroll.getAlignmentX() % measureLength);
 
 		g.setColor(Color.GRAY);
@@ -322,4 +322,7 @@ public class MeasureRuler implements Ruler
 		if(measureLength < measureLengthMinimal)
 			measureLength = measureLengthMinimal;
 	}
+	
+	@Override
+	public void postdrawMainScroll(Graphics g) {	}
 }
