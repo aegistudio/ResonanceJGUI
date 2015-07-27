@@ -62,6 +62,23 @@ public class Arranger extends JFrame
 		this.add(arrangePane);
 		
 		this.model.initElements(arrangePane, channelPane, clipPane, ruler);
+		
+		new Thread()
+		{
+			public void run()
+			{
+				while(true) try
+				{
+					repaint();
+					Thread.sleep(20L);
+				}
+				catch(Exception e)
+				{
+					
+				}
+			}
+		}
+		.start();
 	}
 	
 	public void repaint()

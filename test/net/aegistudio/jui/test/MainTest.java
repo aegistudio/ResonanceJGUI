@@ -2,7 +2,6 @@ package net.aegistudio.jui.test;
 
 import javax.swing.UIManager;
 
-import net.aegistudio.jui.test.arranger.ArrangerModelDecoy;
 import net.aegistudio.resonance.Resonance;
 import net.aegistudio.resonance.jui.Main;
 import net.aegistudio.resonance.jui.arranger.ArrangerLogic;
