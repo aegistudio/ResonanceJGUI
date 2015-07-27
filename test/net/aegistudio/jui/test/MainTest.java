@@ -5,6 +5,7 @@ import javax.swing.UIManager;
 import net.aegistudio.jui.test.arranger.ArrangerModelDecoy;
 import net.aegistudio.resonance.Resonance;
 import net.aegistudio.resonance.jui.Main;
+import net.aegistudio.resonance.jui.arranger.ArrangerLogic;
 import net.aegistudio.resonance.music.MusicController;
 import net.aegistudio.resonance.output.OutputController;
 import net.aegistudio.resonance.output.OutputFacade;
@@ -20,7 +21,7 @@ public class MainTest {
 		MusicController musicController = new MusicController();
 		Resonance resonance = new Resonance(outputLayer, musicController.dataflowController, musicController);
 		
-		Main main = new Main(resonance, new ArrangerModelDecoy());
+		Main main = new Main(resonance, new ArrangerLogic(musicController));
 		main.setVisible(true);
 	}
 }

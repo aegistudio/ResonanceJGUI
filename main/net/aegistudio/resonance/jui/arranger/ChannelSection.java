@@ -48,8 +48,7 @@ public abstract class ChannelSection extends JPanel
 	
 			@Override
 			protected void toggleOn() throws Exception {
-				// TODO Auto-generated method stub
-				
+				// TODO Auto-generated method stub	
 			}
 	
 			@Override
