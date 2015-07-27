@@ -34,11 +34,14 @@ public abstract class ChannelSection extends JPanel
 	
 	protected final ArrangerModel model;
 	
+	public final Channel channel;
+	
 	public ChannelSection(ArrangerModel model, String channelName, Channel channel)
 	{	
 		this.setLayout(null);
 		super.add(channelDenotation);
 		
+		this.channel = channel;
 		this.model = model;
 		mute = new BistateToggle("res/mute_nonactive.png", "res/mute_active.png")
 		{

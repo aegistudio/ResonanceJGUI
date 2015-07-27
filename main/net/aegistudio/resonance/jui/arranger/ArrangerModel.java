@@ -28,7 +28,10 @@ public interface ArrangerModel {
 	public void mute(String channelName, Channel channel);
 	public void solo(String channelName, Channel channel);
 	public KeywordEntry<String, Track>[] getTargerTracks();
+	public KeywordEntry<String, Track> getTargetTrack(String channelname);
+	
 	public KeywordEntry<String, Class<? extends Plugin>>[] getPlugins();
+	public void usePlugin(InstrumentSection section, Class<? extends Plugin> pluginClass) throws Exception;
 	
 	// Clip Related
 	public Clip current();

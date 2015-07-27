@@ -5,8 +5,9 @@ import java.util.Collection;
 import net.aegistudio.resonance.KeywordArray;
 import net.aegistudio.resonance.KeywordArray.KeywordEntry;
 import net.aegistudio.resonance.NamedHolder;
-import net.aegistudio.resonance.OrderedNamedHolder;
+import net.aegistudio.resonance.NamedHolder.NamedEntry;
 import net.aegistudio.resonance.channel.Channel;
+import net.aegistudio.resonance.channel.ChannelHolder;
 import net.aegistudio.resonance.channel.Clip;
 import net.aegistudio.resonance.channel.MidiChannel;
 import net.aegistudio.resonance.channel.Score;
@@ -22,6 +23,7 @@ import net.aegistudio.resonance.jui.measure.MeasuredPanel;
 import net.aegistudio.resonance.mixer.Mixer;
 import net.aegistudio.resonance.mixer.Track;
 import net.aegistudio.resonance.plugin.Plugin;
+import net.aegistudio.resonance.test.util.SineOscillator;
 import net.aegistudio.scroll.RowPanel;
 import net.aegistudio.scroll.ScrollPane;
 
@@ -31,13 +33,13 @@ public class ArrangerModelDecoy implements ArrangerModel
 	
 	@Override
 	public double getCurrentBeatPosition() {
-		System.out.println("Calling getCurrentBeatPosition");
+		//System.out.println("Calling getCurrentBeatPosition");
 		return currentBPos;
 	}
 
 	@Override
 	public void setCurrentBeatPosition(double beatPosition) {
-		System.out.println("Calling setCurrentBeatPosition");
+		//System.out.println("Calling setCurrentBeatPosition");
 		currentBPos = beatPosition;
 	}
 
@@ -47,16 +49,14 @@ public class ArrangerModelDecoy implements ArrangerModel
 		protected Score newObject(Class<?> clazz) {
 			return new Score();
 		}
-		
 	};
+
+	Mixer mixer = new Mixer();
+	{
+		mixer.renameMaster("<master>");
+	}
 	
-	OrderedNamedHolder<Channel> channels = new OrderedNamedHolder<Channel>("channel", true){
-		@Override
-		protected Channel newObject(Class<?> clazz) {
-			if(clazz == MidiChannel.class) return new MidiChannel(scoreHolder){};
-			return null;
-		}
-	};
+	ChannelHolder channels = new ChannelHolder(mixer, scoreHolder);
 		
 	protected String getNextDefaultName(Class<? extends Channel> channelType) {
 		System.out.println("Calling getNextDefaultName");
@@ -85,7 +85,7 @@ public class ArrangerModelDecoy implements ArrangerModel
 		
 		if(channel instanceof MidiChannel)
 		{
-			channelSection = new InstrumentSection(this, channelName, channel);
+			channelSection = new InstrumentSection(this, channelName, (MidiChannel)channel);
 		
 			clips = new ClipStrip(this, ruler, channelSection){
 				
@@ -140,9 +140,6 @@ public class ArrangerModelDecoy implements ArrangerModel
 	public void notifyChange() {
 		
 	}
-
-	
-	Mixer mixer = new Mixer();
 	
 	KeywordEntry<String, Track>[] targetTracks;
 	
@@ -151,14 +148,19 @@ public class ArrangerModelDecoy implements ArrangerModel
 	public KeywordEntry<String, Track>[] getTargerTracks() {
 		if(mixer.hasUpdated(this))
 			targetTracks = mixer.allEntries().toArray(new NamedHolder.NamedEntry[0]);
+		
 		return targetTracks;
 	}
 
-	String[] plugin = new String[]{"target_plugin"};
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked"})
+	NamedHolder.NamedEntry<Class<? extends Plugin>>[] plugins = new NamedHolder.NamedEntry[]{
+			new NamedHolder.NamedEntry<Class<SineOscillator>>("<none>", null),
+			new NamedHolder.NamedEntry<Class<SineOscillator>>("Sine Oscillator", SineOscillator.class)
+	};
+	
 	@Override
 	public KeywordEntry<String, Class<? extends Plugin>>[] getPlugins() {
-		return new NamedHolder.NamedEntry[0];
+		return plugins;
 	}
 
 	ScrollPane arragePane;
@@ -219,6 +221,17 @@ public class ArrangerModelDecoy implements ArrangerModel
 	public void duplicate(Clip clip) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void usePlugin(InstrumentSection section, Class<? extends Plugin> pluginClass) throws Exception{
+		if(pluginClass == null) ((MidiChannel)section.channel).setPlugin(null);
+		else ((MidiChannel)section.channel).setPlugin(pluginClass.newInstance());
+	}
+
+	@Override
+	public NamedEntry<Track> getTargetTrack(String channelname) {
+		return channels.getTargetTrack(channelname);
 	}
 
 }
