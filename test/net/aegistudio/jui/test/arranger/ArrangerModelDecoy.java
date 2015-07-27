@@ -2,6 +2,7 @@ package net.aegistudio.jui.test.arranger;
 
 import java.util.Collection;
 
+import net.aegistudio.resonance.KeywordArray;
 import net.aegistudio.resonance.KeywordArray.KeywordEntry;
 import net.aegistudio.resonance.NamedHolder;
 import net.aegistudio.resonance.OrderedNamedHolder;
@@ -18,6 +19,9 @@ import net.aegistudio.resonance.jui.arranger.ClipStrip;
 import net.aegistudio.resonance.jui.arranger.InstrumentSection;
 import net.aegistudio.resonance.measure.MeasureRuler;
 import net.aegistudio.resonance.measure.MeasuredPanel;
+import net.aegistudio.resonance.mixer.Mixer;
+import net.aegistudio.resonance.mixer.Track;
+import net.aegistudio.resonance.plugin.Plugin;
 import net.aegistudio.scroll.RowPanel;
 import net.aegistudio.scroll.ScrollPane;
 
@@ -97,9 +101,10 @@ public class ArrangerModelDecoy implements ArrangerModel
 	}
 	
 	@Override
-	public Collection<KeywordEntry<String, Channel>> allChannels() {
+	public Collection<? extends KeywordEntry<String, Channel>> allChannels() {
 		return channels.allEntries();
 	}
+	
 	@Override
 	public void removeChannel(ChannelSection channelSection) {
 		channels.remove(channelSection.getChannelName());
@@ -136,14 +141,24 @@ public class ArrangerModelDecoy implements ArrangerModel
 		
 	}
 
+	
+	Mixer mixer = new Mixer();
+	
+	KeywordEntry<String, Track>[] targetTracks;
+	
+	@SuppressWarnings("unchecked")
 	@Override
-	public String[] getTargerTracks() {
-		return null;
+	public KeywordEntry<String, Track>[] getTargerTracks() {
+		if(mixer.hasUpdated(this))
+			targetTracks = mixer.allEntries().toArray(new NamedHolder.NamedEntry[0]);
+		return targetTracks;
 	}
 
+	String[] plugin = new String[]{"target_plugin"};
+	@SuppressWarnings("unchecked")
 	@Override
-	public String[] getPlugins() {
-		return null;
+	public KeywordEntry<String, Class<? extends Plugin>>[] getPlugins() {
+		return new NamedHolder.NamedEntry[0];
 	}
 
 	ScrollPane arragePane;
@@ -177,7 +192,7 @@ public class ArrangerModelDecoy implements ArrangerModel
 	{
 		System.out.println("insert!" + location);
 		((MeasuredPanel)channel.parent.getMainScroll())
-			.add(new ClipComponent(this, channel, location, current(), ruler)
+			.add(new ClipComponent(this, channel, new KeywordArray.DefaultKeywordEntry<Double, Clip>(location, current()), ruler)
 			{
 				{
 					this.clipDenotation.setText(((ScoreClip)current()).getScore());
@@ -189,15 +204,21 @@ public class ArrangerModelDecoy implements ArrangerModel
 	}
 
 	@Override
-	public double trim(ClipComponent clip, double offset, double length) {
-		ScoreClip sclip = (ScoreClip)clip.clip;
-		(sclip).trim(sclip.getLength() + length, sclip.getLength() + offset);
-		return clip.start() + offset;
+	public KeywordEntry<Double, Clip> trim(ClipComponent clip, double offset, double length) {
+		ScoreClip sclip = (ScoreClip)clip.clipEntry.getValue();
+		(sclip).trim(sclip.getLength() + length - offset, sclip.getLength() + offset);
+		return new KeywordArray.DefaultKeywordEntry<Double, Clip>(clip.start() + offset, sclip);
 	}
 
 	@Override
-	public double move(ClipComponent clip, double delta) {
-		return clip.start() + delta;
+	public KeywordEntry<Double, Clip> move(ClipComponent clip, double delta) {
+		return new KeywordArray.DefaultKeywordEntry<Double, Clip>(clip.start() + delta, clip.clipEntry.getValue());
+	}
+
+	@Override
+	public void duplicate(Clip clip) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

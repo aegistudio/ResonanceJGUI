@@ -17,11 +17,13 @@ public abstract class ClipStrip extends MeasuredPanel
 	static Cursor crossCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
 	static Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
 	
+	public final Component padding;
+	
 	public ClipStrip(final ArrangerModel model, MeasureRuler ruler, ChannelSection sectionPanel)
 	{
 		super(ruler, sectionPanel);
 		
-		this.add(new Component()
+		super.add(padding = new Component()
 		{
 			Dimension preferredSize = new Dimension();
 			public Dimension getPreferredSize()
@@ -55,6 +57,12 @@ public abstract class ClipStrip extends MeasuredPanel
 				else setCursor(normalCursor);
 			}
 		});
+	}
+	
+	public void recalculateSize()
+	{
+		super.recalculateSize();
+		super.setComponentZOrder(padding, super.getComponentCount() - 1);
 	}
 	
 	protected abstract boolean accept(Object resource);

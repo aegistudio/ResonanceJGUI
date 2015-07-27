@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
 
+import net.aegistudio.resonance.KeywordArray.KeywordEntry;
 import net.aegistudio.resonance.channel.Clip;
 import net.aegistudio.resonance.measure.Measurable;
 import net.aegistudio.resonance.measure.MeasureRuler;
@@ -31,15 +32,13 @@ public class ClipComponent extends Component implements Measurable
 	static Cursor trimCursor = new Cursor(Cursor.E_RESIZE_CURSOR);
 	static Cursor moveCursor = new Cursor(Cursor.MOVE_CURSOR);
 	
-	public double offset;
-	public final Clip clip;
+	public KeywordEntry<Double, Clip> clipEntry;
 	public final MeasureRuler ruler;
 	
-	public ClipComponent(ArrangerModel model, final ChannelSection channel, double initialOffset, Clip clip, MeasureRuler ruler)
+	public ClipComponent(ArrangerModel model, final ChannelSection channel, KeywordEntry<Double, Clip> clipEntry, MeasureRuler ruler)
 	{
 		this.model = model;
-		this.clip = clip;
-		this.offset = initialOffset;
+		this.clipEntry = clipEntry;
 		this.ruler = ruler;
 		
 		this.clipDenotation.setOpaque(false);
@@ -101,6 +100,12 @@ public class ClipComponent extends Component implements Measurable
 					model.removeClip(channel, ClipComponent.this);
 			}
 			
+			public void mouseClicked(MouseEvent event)
+			{
+				if(event.getClickCount() >= 2)
+					model.duplicate(ClipComponent.this.clipEntry.getValue());
+			}
+			
 			public void mouseReleased(MouseEvent event)
 			{
 				if(event.getButton() == MouseEvent.BUTTON1)
@@ -108,11 +113,11 @@ public class ClipComponent extends Component implements Measurable
 					try
 					{
 						if(processCode == 0)
-							offset = model.move(ClipComponent.this, ruler.getBeat(getX() - beginPoint.x));
+							ClipComponent.this.clipEntry = model.move(ClipComponent.this, ruler.getBeat(getX() - beginPoint.x));
 						else if(processCode == 1)
-							offset = model.trim(ClipComponent.this, - ruler.getBeat((getPreferredSize().width - originalSize.width)), 0);
+							ClipComponent.this.clipEntry = model.trim(ClipComponent.this, - ruler.getBeat((getPreferredSize().width - originalSize.width)), 0);
 						else if(processCode == 2)
-							offset = model.trim(ClipComponent.this, 0, ruler.getBeat(getPreferredSize().width - originalSize.width));
+							ClipComponent.this.clipEntry = model.trim(ClipComponent.this, 0, ruler.getBeat(getPreferredSize().width - originalSize.width));
 						
 						if(getParent() instanceof MeasuredPanel)
 							((MeasuredPanel) getParent()).recalculateMeasure();
@@ -183,11 +188,11 @@ public class ClipComponent extends Component implements Measurable
 	
 	public double start()
 	{
-		return this.offset;
+		return this.clipEntry.getKeyword();
 	}
 	
 	public double duration()
 	{
-		return this.clip.getLength();
+		return this.clipEntry.getValue().getLength();
 	}
 }

@@ -32,11 +32,14 @@ public abstract class ChannelSection extends JPanel
 	public final JLabel mute;
 	public final JLabel solo;
 	
-	public ChannelSection(final ArrangerModel model, String channelName, Channel channel)
+	protected final ArrangerModel model;
+	
+	public ChannelSection(ArrangerModel model, String channelName, Channel channel)
 	{	
 		this.setLayout(null);
 		super.add(channelDenotation);
 		
+		this.model = model;
 		mute = new BistateToggle("res/mute_nonactive.png", "res/mute_active.png")
 		{
 	

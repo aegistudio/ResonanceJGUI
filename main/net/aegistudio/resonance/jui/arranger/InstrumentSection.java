@@ -1,5 +1,7 @@
 package net.aegistudio.resonance.jui.arranger;
 
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -37,6 +39,9 @@ public class InstrumentSection extends ChannelSection
 		super.add(pluginComboBox);
 	}
 
+	String[] currentTrack = new String[0];
+	String[] currentPlugin = new String[0];
+	
 	protected void recalculate()
 	{
 		outputIcon.setLocation(5, 24);
@@ -50,6 +55,23 @@ public class InstrumentSection extends ChannelSection
 		
 		pluginComboBox.setLocation(pluginIcon.getX() + 22, pluginIcon.getY() - 2);
 		pluginComboBox.setSize(this.getWidth() - pluginComboBox.getX() - 2, 24);
+		
+		/*
+		String[] plugins = super.model.getPlugins();
+		if(plugins != currentPlugin)
+		{
+			currentPlugin = plugins;
+			String[] newModel = new String[plugins.length + 1];
+			newModel[0] = "<none>";
+			for(int i = 1; i < newModel.length; i ++)
+			{
+				newModel[i] = plugins[i - 1];
+			}
+			
+			pluginComboBox.setModel(new DefaultComboBoxModel<String>(newModel));
+			pluginComboBox.updateUI();
+		}
+		*/
 		
 		super.recalculate();
 	}
