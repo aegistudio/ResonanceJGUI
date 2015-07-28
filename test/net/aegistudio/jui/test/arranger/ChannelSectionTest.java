@@ -12,7 +12,7 @@ public class ChannelSectionTest {
 	{
 		UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 		
-		ChannelSection ch = new InstrumentSection(null, "Channel", new MidiChannel(null));
+		ChannelSection ch = new InstrumentSection(new ArrangerModelDecoy(), "Channel", new MidiChannel(null));
 		JFrame jf =  new JFrame();
 		jf.add(ch);
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

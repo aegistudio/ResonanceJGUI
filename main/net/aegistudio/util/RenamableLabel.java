@@ -14,14 +14,16 @@ import javax.swing.JTextField;
 @SuppressWarnings("serial")
 public abstract class RenamableLabel extends JPanel
 {
-	JLabel nameLabel = new JLabel();
-	JTextField renameField = new JTextField();
+	protected JLabel nameLabel = new JLabel();
+	protected JTextField renameField = new JTextField();
 	
 	String name;
+	boolean isEditing;
 	
 	protected RenamableLabel(String initialName)
 	{
 		super.setLayout(null);
+		super.setOpaque(true);
 		name = initialName;
 		this.nameLabel.setText(initialName);
 		this.renameField.setText(initialName);
@@ -35,9 +37,10 @@ public abstract class RenamableLabel extends JPanel
 			}
 		});
 		
-		super.add(this.nameLabel);
+		super.add(this.nameLabel, 0);
 		
 		renameField.setVisible(false);
+		isEditing = false;
 		renameField.setFont(nameLabel.getFont());
 		renameField.addKeyListener(new KeyAdapter()
 		{
@@ -47,6 +50,7 @@ public abstract class RenamableLabel extends JPanel
 				{
 					renameField.setVisible(false);
 					nameLabel.setVisible(true);
+					isEditing = false;
 					if(!renameField.getText().equals(nameLabel.getText())) try
 					{
 						submit(name, renameField.getText());
@@ -62,12 +66,12 @@ public abstract class RenamableLabel extends JPanel
 				}
 			}			
 		});
-		super.add(this.renameField);
+		super.add(this.renameField, 0);
 	}
 	
 	public void beginRename()
 	{
-		nameLabel.setVisible(false);
+		isEditing = true;
 		renameField.setVisible(true);
 	}
 	
@@ -75,9 +79,22 @@ public abstract class RenamableLabel extends JPanel
 	{
 		this.nameLabel.setLocation(1, -1);
 		this.nameLabel.setSize(getSize());
-		this.renameField.setLocation(0, 0);
-		this.renameField.setSize(getSize());
+		if(this.nameLabel.getIcon() == null)
+		{
+			this.renameField.setLocation(0, 0);
+			this.renameField.setSize(getSize());
+		}
+		else
+		{
+			this.renameField.setLocation(getHeight(), 0);
+			this.renameField.setSize(getWidth() - getHeight(), getHeight());
+		}
 		super.paint(g);
+	}
+	
+	public boolean isEditing()
+	{
+		return this.isEditing;
 	}
 	
 	protected abstract void submit(String oldName, String newName) throws Exception;

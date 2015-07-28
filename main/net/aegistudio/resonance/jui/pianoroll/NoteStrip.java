@@ -44,8 +44,9 @@ public class NoteStrip extends PaddingMeasuredPanel
 			{
 				if(me.getButton() == MouseEvent.BUTTON1)
 				{
-					NoteComponent component = model.create(NoteStrip.this, ruler.getBeat(beginLocation),
-							ruler.getBeat(endLocation - beginLocation));
+					NoteComponent component = model.create(NoteStrip.this,
+							ruler.getBeat(Math.min(beginLocation, endLocation)),
+							ruler.getBeat(Math.abs(endLocation - beginLocation)));
 					if(component != null)
 					{
 						add(component);
@@ -74,7 +75,8 @@ public class NoteStrip extends PaddingMeasuredPanel
 		if(beginLocation >= 0 && endLocation >= 0)
 		{
 			g.setColor(Color.GRAY.darker());
-			g.fillRect(beginLocation, 0, endLocation - beginLocation, getHeight());
+			g.fillRect(Math.min(beginLocation, endLocation), 0,
+					Math.abs(endLocation - beginLocation), getHeight());
 		}
 	}
 }
