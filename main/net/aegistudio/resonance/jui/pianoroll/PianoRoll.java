@@ -71,9 +71,22 @@ public class PianoRoll extends JFrame
 				pianoRoll.getVerticalScrollBar()
 					.setValue((127 - 4 * 12) * KeyboardStrip.sectionHeight);
 				
+				String scoreName = new String();
 				while(activated) try
 				{
 					PianoRoll.this.repaint();
+					
+					if(scoreName != model.getScoreName())
+					{
+						scoreName = model.getScoreName();
+						if(scoreName == null)
+						{
+							setVisible(false);
+							activated = false;
+						}
+						else setTitle("Piano Roll - " + scoreName);
+					}
+					
 					Thread.sleep(20L);
 				}
 				catch(Exception e){

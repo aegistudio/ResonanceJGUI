@@ -118,6 +118,8 @@ public class FoldableComponent extends Container
 
 		if(this.parent != null)
 			this.parent.recalculateSize();
+		else if(getParent() instanceof RecursivePanel)
+			((RecursivePanel) getParent()).recalculateSize();
 	}
 	
 	public void setBackground(Color bg)

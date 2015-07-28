@@ -1,8 +1,15 @@
 package net.aegistudio.jui.test.resource;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
 import net.aegistudio.resonance.KeywordArray.KeywordEntry;
 import net.aegistudio.resonance.NamedHolder;
 import net.aegistudio.resonance.channel.Score;
+import net.aegistudio.resonance.jui.pianoroll.PianoRoll;
+import net.aegistudio.resonance.jui.pianoroll.PianoRollLogic;
 import net.aegistudio.resonance.jui.resource.ResourceModel;
 import net.aegistudio.resonance.jui.resource.ScoreCatalog;
 import net.aegistudio.resonance.jui.resource.ScoreEntry;
@@ -16,6 +23,9 @@ public class ResourceModelDecoy implements ResourceModel
 			return new Score();
 		}
 	};
+	{
+		scoreHolder.create("TestScore");
+	}
 	
 	@Override
 	public Object getCurrentResource() {
@@ -68,6 +78,43 @@ public class ResourceModelDecoy implements ResourceModel
 		catch(RuntimeException e)
 		{
 			throw new Exception(e.getMessage());
+		}
+	}
+
+	@Override
+	public Collection<? extends KeywordEntry<String, Score>> allScores() {
+		return scoreHolder.allEntries();
+	}
+
+	public final HashMap<Score, PianoRoll> scoreMapper = new HashMap<Score, PianoRoll>();
+	
+	@Override
+	public void requestScoreEdit(ScoreEntry entry) {
+		synchronized(scoreMapper)
+		{
+			PianoRoll pianoRoll = scoreMapper.get(entry.score.getValue());
+			if(pianoRoll != null && pianoRoll.activated)
+				pianoRoll.requestFocus();
+			else
+			{
+				pianoRoll = new PianoRoll(new PianoRollLogic(entry.score));
+				scoreMapper.put(entry.score.getValue(), pianoRoll);
+				pianoRoll.setVisible(true);
+			}
+		}
+		cleanupScoreEdit();
+	}
+	
+	public void cleanupScoreEdit()
+	{
+		synchronized(scoreMapper){
+			Iterator<Entry<Score, PianoRoll>> entries = scoreMapper.entrySet().iterator();
+			while(entries.hasNext())
+			{
+				Entry<Score, PianoRoll> entry = entries.next();
+				if(!entry.getValue().activated)
+					entries.remove();
+			}
 		}
 	}
 }

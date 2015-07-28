@@ -19,4 +19,5 @@ public interface PianoRollModel{
 	
 	public NoteComponent create(NoteStrip key, double offset, double size);
 
+	public String getScoreName();
 }

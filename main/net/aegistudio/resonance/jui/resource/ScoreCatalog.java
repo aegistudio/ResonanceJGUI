@@ -6,6 +6,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import net.aegistudio.resonance.KeywordArray.KeywordEntry;
+import net.aegistudio.resonance.channel.Score;
 import net.aegistudio.util.FoldableComponent;
 
 
@@ -31,6 +33,10 @@ public class ScoreCatalog extends FoldableComponent
 					scoreMenu.show(foldingObject, me.getX(), me.getY());
 			}
 		});
+		
+		for(KeywordEntry<String, Score> entry : resModel.allScores())
+			this.addOffspring(new ScoreEntry(resModel, entry));
+		this.setFold(false);
 	}
 	
 }

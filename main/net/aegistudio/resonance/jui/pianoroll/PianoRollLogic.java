@@ -9,10 +9,12 @@ import net.aegistudio.resonance.jui.measure.MeasureRuler;
 
 public class PianoRollLogic implements PianoRollModel
 {
+	public final KeywordEntry<String, Score> scoreEntry;
 	public final Score score;
-	public PianoRollLogic(Score targetScore)
+	public PianoRollLogic(KeywordEntry<String, Score> targetScore)
 	{
-		this.score = targetScore;
+		this.scoreEntry = targetScore;
+		this.score = this.scoreEntry.getValue();
 	}
 	
 	@Override
@@ -61,5 +63,10 @@ public class PianoRollLogic implements PianoRollModel
 		if(size <= 0 || offset < 0) return null;
 		KeywordEntry<Double, Note> target = score.addNote(offset, new Note((byte)key.note, (byte)127, size));
 		return new NoteComponent(this, key, target, ruler);
+	}
+	
+	public String getScoreName()
+	{
+		return this.scoreEntry.getKeyword();
 	}
 }

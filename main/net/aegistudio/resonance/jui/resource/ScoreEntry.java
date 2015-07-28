@@ -25,7 +25,7 @@ public class ScoreEntry extends RenamableEntry{
 	}
 	
 	public void doEdit(){
-		System.out.println("Edit");
+		resModel.requestScoreEdit(this);
 	}
 	
 	public void doUse(){

@@ -67,4 +67,9 @@ public class PianoRollModelDecoy implements PianoRollModel
 		return new NoteComponent(this, key, target, ruler);
 	}
 
+	@Override
+	public String getScoreName() {
+		return "Test";
+	}
+
 }
