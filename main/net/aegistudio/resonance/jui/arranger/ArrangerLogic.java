@@ -9,6 +9,7 @@ import net.aegistudio.resonance.NamedHolder.NamedEntry;
 import net.aegistudio.resonance.channel.Channel;
 import net.aegistudio.resonance.channel.Clip;
 import net.aegistudio.resonance.channel.MidiChannel;
+import net.aegistudio.resonance.channel.Score;
 import net.aegistudio.resonance.channel.ScoreClip;
 import net.aegistudio.resonance.jui.measure.MeasureRuler;
 import net.aegistudio.resonance.jui.measure.MeasuredPanel;
@@ -152,7 +153,7 @@ public class ArrangerLogic implements ArrangerModel
 		return new ScoreClip(musicLayer.getScoreHolder())
 		{
 			{
-				this.setScore("Verse");
+				super.scoreEntry = new NamedEntry<Score>("Test", new Score());
 				this.clipLength = 4.0;
 			}
 		};
@@ -162,14 +163,11 @@ public class ArrangerLogic implements ArrangerModel
 	@Override
 	public void insertClip(ChannelSection channel, double location)
 	{
-		((MeasuredPanel)channel.parent.getMainScroll())
-			.add(new ClipComponent(this, channel, new KeywordArray.DefaultKeywordEntry<Double, Clip>(location, current()), ruler)
-			{
-				{
-					this.clipDenotation.setText(((ScoreClip)current()).getScore());
-				}
-			});
-		
+		if(current() instanceof ScoreClip)
+		{
+			((MeasuredPanel)channel.parent.getMainScroll())
+				.add(new ScoreClipComponent(this, channel, new KeywordArray.DefaultKeywordEntry<Double, ScoreClip>(location, (ScoreClip)current()), ruler));
+		}
 		((MeasuredPanel)channel.parent.getMainScroll())
 			.recalculateMeasure();
 	}

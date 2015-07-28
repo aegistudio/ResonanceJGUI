@@ -32,10 +32,10 @@ public class ClipComponent extends Component implements Measurable
 	static Cursor trimCursor = new Cursor(Cursor.E_RESIZE_CURSOR);
 	static Cursor moveCursor = new Cursor(Cursor.MOVE_CURSOR);
 	
-	public KeywordEntry<Double, Clip> clipEntry;
+	public KeywordEntry<Double, ? extends Clip> clipEntry;
 	public final MeasureRuler ruler;
 	
-	public ClipComponent(ArrangerModel model, final ChannelSection channel, KeywordEntry<Double, Clip> clipEntry, MeasureRuler ruler)
+	public ClipComponent(ArrangerModel model, final ChannelSection channel, KeywordEntry<Double, ? extends Clip> clipEntry, MeasureRuler ruler)
 	{
 		this.model = model;
 		this.clipEntry = clipEntry;

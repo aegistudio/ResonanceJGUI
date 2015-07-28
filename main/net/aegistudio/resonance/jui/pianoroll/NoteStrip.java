@@ -44,15 +44,17 @@ public class NoteStrip extends PaddingMeasuredPanel
 			{
 				if(me.getButton() == MouseEvent.BUTTON1)
 				{
-					NoteComponent component = model.create(NoteStrip.this,
-							ruler.getBeat(Math.min(beginLocation, endLocation)),
-							ruler.getBeat(Math.abs(endLocation - beginLocation)));
-					if(component != null)
+					if(endLocation != -1)
 					{
-						add(component);
-						recalculateMeasure();
+						NoteComponent component = model.create(NoteStrip.this,
+								ruler.getBeat(Math.min(beginLocation, endLocation)),
+								ruler.getBeat(Math.abs(endLocation - beginLocation)));
+						if(component != null)
+						{
+							add(component);
+							recalculateMeasure();
+						}
 					}
-					
 					removeMouseMotionListener(this);
 					beginLocation = -1;
 					endLocation = -1;

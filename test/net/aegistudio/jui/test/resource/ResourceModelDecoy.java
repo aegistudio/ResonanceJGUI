@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import net.aegistudio.resonance.KeywordArray.KeywordEntry;
 import net.aegistudio.resonance.NamedHolder;
+import net.aegistudio.resonance.channel.Note;
 import net.aegistudio.resonance.channel.Score;
 import net.aegistudio.resonance.jui.pianoroll.PianoRoll;
 import net.aegistudio.resonance.jui.pianoroll.PianoRollLogic;
@@ -24,7 +25,8 @@ public class ResourceModelDecoy implements ResourceModel
 		}
 	};
 	{
-		scoreHolder.create("TestScore");
+		Score theScore = scoreHolder.create("TestScore");
+		theScore.addNote(0, new Note((byte)30, (byte)127, 4.0));
 	}
 	
 	@Override
@@ -116,5 +118,10 @@ public class ResourceModelDecoy implements ResourceModel
 					entries.remove();
 			}
 		}
+	}
+
+	@Override
+	public void requestUseScore(ScoreEntry entry) {
+		
 	}
 }

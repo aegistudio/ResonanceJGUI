@@ -18,6 +18,7 @@ import net.aegistudio.resonance.jui.arranger.ChannelStrip;
 import net.aegistudio.resonance.jui.arranger.ClipComponent;
 import net.aegistudio.resonance.jui.arranger.ClipStrip;
 import net.aegistudio.resonance.jui.arranger.InstrumentSection;
+import net.aegistudio.resonance.jui.arranger.ScoreClipComponent;
 import net.aegistudio.resonance.jui.measure.MeasureRuler;
 import net.aegistudio.resonance.jui.measure.MeasuredPanel;
 import net.aegistudio.resonance.mixer.Mixer;
@@ -182,24 +183,18 @@ public class ArrangerModelDecoy implements ArrangerModel
 		return new ScoreClip(scoreHolder)
 		{
 			{
-				this.setScore("Verse");
+				super.scoreEntry = new NamedEntry<Score>("", null);
 				this.clipLength = 4.0;
 			}
 		};
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void insertClip(ChannelSection channel, double location)
 	{
 		System.out.println("insert!" + location);
 		((MeasuredPanel)channel.parent.getMainScroll())
-			.add(new ClipComponent(this, channel, new KeywordArray.DefaultKeywordEntry<Double, Clip>(location, current()), ruler)
-			{
-				{
-					this.clipDenotation.setText(((ScoreClip)current()).getScore());
-				}
-			});
+			.add(new ScoreClipComponent(this, channel, new KeywordArray.DefaultKeywordEntry<Double, ScoreClip>(location, (ScoreClip)current()), ruler));
 		
 		((MeasuredPanel)channel.parent.getMainScroll())
 			.recalculateMeasure();

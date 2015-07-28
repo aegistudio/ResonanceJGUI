@@ -15,9 +15,9 @@ public class ScoreEntry extends RenamableEntry{
 	
 	public ScoreEntry(ResourceModel resModel, KeywordEntry<String, Score> score) {
 		super("res/midi.png", score.getKeyword());
-		this.scoreMenu = new ScorePopupMenu(resModel, this);
 		this.score = score;
 		this.resModel = resModel;
+		this.scoreMenu = new ScorePopupMenu(resModel, this);
 	}
 
 	public void doRename(){

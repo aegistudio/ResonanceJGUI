@@ -18,4 +18,5 @@ public interface ResourceModel {
 	public void removeScore(ScoreEntry entry);
 	public void renameScore(ScoreEntry entry, String oldName, String newName) throws Exception;
 	public void requestScoreEdit(ScoreEntry entry);
+	public void requestUseScore(ScoreEntry entry);
 }

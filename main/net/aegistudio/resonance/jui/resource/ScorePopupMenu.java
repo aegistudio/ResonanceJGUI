@@ -12,7 +12,7 @@ import javax.swing.JPopupMenu;
 @SuppressWarnings("serial")
 public class ScorePopupMenu extends JPopupMenu
 {
-	JMenuItem score = new JMenuItem("Score");
+	JMenuItem score;
 	
 	JMenuItem createScore = new JMenuItem("Create Score");
 	JMenuItem eraseScore = new JMenuItem("Erase Current Score");
@@ -24,6 +24,10 @@ public class ScorePopupMenu extends JPopupMenu
 	protected final ScoreEntry scoreEntry;
 	public ScorePopupMenu(ResourceModel resModel, ScoreEntry scoreEntry){
 		this.scoreEntry = scoreEntry;
+		
+		if(this.scoreEntry == null)
+			score = new JMenuItem("Score");
+		else score = new JMenuItem(scoreEntry.score.getKeyword());
 		
 		score.setForeground(Color.BLUE.darker());
 		score.setEnabled(false);
