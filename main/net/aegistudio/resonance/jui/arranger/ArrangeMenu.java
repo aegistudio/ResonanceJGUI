@@ -61,7 +61,7 @@ public class ArrangeMenu extends JPopupMenu{
 				if(target != null)
 				{
 					int selection = JOptionPane.showConfirmDialog(target, String.format("Are you sure to erase the channel %s (can't be undo)?", target.getChannelName()), "Erasure confirm",
-							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+							JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 					if(selection == JOptionPane.YES_OPTION)
 						arrangerModel.removeChannel(target);
 				}

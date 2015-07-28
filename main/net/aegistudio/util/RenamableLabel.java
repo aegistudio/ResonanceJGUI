@@ -17,6 +17,8 @@ public abstract class RenamableLabel extends JPanel
 	protected JLabel nameLabel = new JLabel();
 	protected JTextField renameField = new JTextField();
 	
+	protected final MouseAdapter doubleClickRename;
+	
 	String name;
 	boolean isEditing;
 	
@@ -28,7 +30,7 @@ public abstract class RenamableLabel extends JPanel
 		this.nameLabel.setText(initialName);
 		this.renameField.setText(initialName);
 		
-		this.nameLabel.addMouseListener(new MouseAdapter()
+		this.nameLabel.addMouseListener(doubleClickRename = new MouseAdapter()
 		{
 			public void mouseClicked(MouseEvent click)
 			{
@@ -75,18 +77,24 @@ public abstract class RenamableLabel extends JPanel
 		renameField.setVisible(true);
 	}
 	
+	protected int nameLabelX = 1;
+	protected int nameLabelY = -1;
+	
+	protected int renameFieldX = 0;
+	protected int renameFieldY = 0;
+	
 	public void paint(Graphics g)
 	{
-		this.nameLabel.setLocation(1, -1);
+		this.nameLabel.setLocation(nameLabelX, nameLabelY);
 		this.nameLabel.setSize(getSize());
 		if(this.nameLabel.getIcon() == null)
 		{
-			this.renameField.setLocation(0, 0);
+			this.renameField.setLocation(renameFieldX, renameFieldY);
 			this.renameField.setSize(getSize());
 		}
 		else
 		{
-			this.renameField.setLocation(getHeight(), 0);
+			this.renameField.setLocation(renameFieldX + getHeight(), renameFieldY);
 			this.renameField.setSize(getWidth() - getHeight(), getHeight());
 		}
 		super.paint(g);
