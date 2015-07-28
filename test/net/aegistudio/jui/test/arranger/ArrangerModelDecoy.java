@@ -201,14 +201,14 @@ public class ArrangerModelDecoy implements ArrangerModel
 	}
 
 	@Override
-	public KeywordEntry<Double, Clip> trim(ClipComponent clip, double offset, double length) {
+	public KeywordEntry<Double, Clip> trim(ChannelSection channelSection, ClipComponent clip, double offset, double length) {
 		ScoreClip sclip = (ScoreClip)clip.clipEntry.getValue();
 		(sclip).trim(sclip.getLength() + length - offset, sclip.getLength() + offset);
 		return new KeywordArray.DefaultKeywordEntry<Double, Clip>(clip.start() + offset, sclip);
 	}
 
 	@Override
-	public KeywordEntry<Double, Clip> move(ClipComponent clip, double delta) {
+	public KeywordEntry<Double, Clip> move(ChannelSection channelSection, ClipComponent clip, double delta) {
 		return new KeywordArray.DefaultKeywordEntry<Double, Clip>(clip.start() + delta, clip.clipEntry.getValue());
 	}
 

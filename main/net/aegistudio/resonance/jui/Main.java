@@ -52,6 +52,8 @@ public class Main extends JFrame
 		super.add(desktopPane);
 		
 		Point mainLocation = new Point();
+		mainLocation.x = 50;
+		mainLocation.y = 100;
 		this.setLocation(mainLocation);
 		
 		this.arranger = new Arranger(arrangerModel);

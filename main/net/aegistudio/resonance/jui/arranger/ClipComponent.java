@@ -113,11 +113,11 @@ public class ClipComponent extends Component implements Measurable
 					try
 					{
 						if(processCode == 0)
-							ClipComponent.this.clipEntry = model.move(ClipComponent.this, ruler.getBeat(getX() - beginPoint.x));
+							ClipComponent.this.clipEntry = model.move(channel, ClipComponent.this, ruler.getBeat(getX() - beginPoint.x));
 						else if(processCode == 1)
-							ClipComponent.this.clipEntry = model.trim(ClipComponent.this, - ruler.getBeat((getPreferredSize().width - originalSize.width)), 0);
+							ClipComponent.this.clipEntry = model.trim(channel, ClipComponent.this, - ruler.getBeat((getPreferredSize().width - originalSize.width)), 0);
 						else if(processCode == 2)
-							ClipComponent.this.clipEntry = model.trim(ClipComponent.this, 0, ruler.getBeat(getPreferredSize().width - originalSize.width));
+							ClipComponent.this.clipEntry = model.trim(channel, ClipComponent.this, 0, ruler.getBeat(getPreferredSize().width - originalSize.width));
 						
 						if(getParent() instanceof MeasuredPanel)
 							((MeasuredPanel) getParent()).recalculateMeasure();

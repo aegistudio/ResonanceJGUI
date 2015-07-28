@@ -40,6 +40,6 @@ public interface ArrangerModel {
 	public void endDuplication();
 	public void insertClip(ChannelSection channel, double location);
 	public void removeClip(ChannelSection channel, ClipComponent clip);
-	public KeywordEntry<Double, Clip> trim(ClipComponent clip, double offset, double length);
-	public KeywordEntry<Double, Clip> move(ClipComponent clip, double delta);
+	public KeywordEntry<Double, Clip> trim(ChannelSection channel, ClipComponent clip, double offset, double length);
+	public KeywordEntry<Double, Clip> move(ChannelSection channel, ClipComponent clip, double delta);
 }

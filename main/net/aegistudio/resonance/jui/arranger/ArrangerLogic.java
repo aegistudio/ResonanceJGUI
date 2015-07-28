@@ -89,13 +89,72 @@ public class ArrangerLogic implements ArrangerModel
 	public void renameChannel(String oldName, String newName) {
 		musicLayer.getChannelHolder().rename(oldName, newName);
 	}
-
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected void removeScoreClip(ChannelSection channel, KeywordEntry clip)
+	{
+		channel.channel.getClips(ScoreClip.class).remove(clip);	
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected void insertScoreClip(ChannelSection channel, KeywordEntry clip)
+	{
+		channel.channel.getClips(ScoreClip.class).add(clip);
+	}
+	
+	@Override
+	public void insertClip(ChannelSection channel, double location)
+	{
+		if(current() instanceof ScoreClip)
+		{
+			KeywordEntry<Double, ScoreClip> clipEntry = new KeywordArray.DefaultKeywordEntry<Double, ScoreClip>(location, ((ScoreClip)current()).clone());
+			ScoreClipComponent scoreClipComponent = new ScoreClipComponent(this, channel, clipEntry, ruler);
+			insertScoreClip(channel, clipEntry);
+			((MeasuredPanel)channel.parent.getMainScroll())
+				.add(scoreClipComponent);
+		}
+		((MeasuredPanel)channel.parent.getMainScroll())
+			.recalculateMeasure();
+	}
+	
 	@Override
 	public void removeClip(ChannelSection channel, ClipComponent clip) {
+		
+		Clip clipInstance = clip.clipEntry.getValue();
+		if(clipInstance instanceof ScoreClip)
+			removeScoreClip(channel, clip.clipEntry);
+		
 		((MeasuredPanel)channel.parent.getMainScroll())
 			.remove(clip);
 		((MeasuredPanel)channel.parent.getMainScroll())
 			.recalculateMeasure();
+	}
+	
+	@Override
+	public KeywordEntry<Double, Clip> trim(ChannelSection channelSection, ClipComponent clip, double offset, double length) {
+		Clip clipInstance = clip.clipEntry.getValue();
+		if(clipInstance instanceof ScoreClip)
+		{
+			ScoreClip sclip = (ScoreClip)clipInstance;
+			removeScoreClip(channelSection, clip.clipEntry);
+			(sclip).trim(sclip.getLength() + length - offset, sclip.getLength() + offset);
+			KeywordEntry<Double, Clip> entry = new KeywordArray.DefaultKeywordEntry<Double, Clip>(Math.max(clip.start() + offset, 0.0), sclip);
+			insertScoreClip(channelSection, entry);
+			return entry;
+		}
+		else return null;
+	}
+
+	@Override
+	public KeywordEntry<Double, Clip> move(ChannelSection channelSection, ClipComponent clip, double delta) {
+		if(clip.clipEntry.getValue() instanceof ScoreClip)
+		{
+			removeScoreClip(channelSection, clip.clipEntry);
+			KeywordEntry<Double, Clip> entry = new KeywordArray.DefaultKeywordEntry<Double, Clip>(Math.max(clip.start() + delta, 0.0), clip.clipEntry.getValue());
+			insertScoreClip(channelSection, entry);
+			return entry;
+		}
+		else return null;
 	}
 
 	@Override
@@ -177,30 +236,6 @@ public class ArrangerLogic implements ArrangerModel
 			}
 		}
 		return currentClip;
-	}
-
-	@Override
-	public void insertClip(ChannelSection channel, double location)
-	{
-		if(current() instanceof ScoreClip)
-		{
-			((MeasuredPanel)channel.parent.getMainScroll())
-				.add(new ScoreClipComponent(this, channel, new KeywordArray.DefaultKeywordEntry<Double, ScoreClip>(location, ((ScoreClip)current()).clone()), ruler));
-		}
-		((MeasuredPanel)channel.parent.getMainScroll())
-			.recalculateMeasure();
-	}
-
-	@Override
-	public KeywordEntry<Double, Clip> trim(ClipComponent clip, double offset, double length) {
-		ScoreClip sclip = (ScoreClip)clip.clipEntry.getValue();
-		(sclip).trim(sclip.getLength() + length - offset, sclip.getLength() + offset);
-		return new KeywordArray.DefaultKeywordEntry<Double, Clip>(Math.max(clip.start() + offset, 0.0), sclip);
-	}
-
-	@Override
-	public KeywordEntry<Double, Clip> move(ClipComponent clip, double delta) {
-		return new KeywordArray.DefaultKeywordEntry<Double, Clip>(Math.max(clip.start() + delta, 0.0), clip.clipEntry.getValue());
 	}
 
 	@Override
