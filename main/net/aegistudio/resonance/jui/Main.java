@@ -2,6 +2,7 @@ package net.aegistudio.resonance.jui;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Point;
 import java.io.File;
 
 import javax.imageio.ImageIO;
@@ -13,6 +14,8 @@ import javax.swing.JFrame;
 import net.aegistudio.resonance.Resonance;
 import net.aegistudio.resonance.jui.arranger.Arranger;
 import net.aegistudio.resonance.jui.arranger.ArrangerModel;
+import net.aegistudio.resonance.jui.resource.ResourceManager;
+import net.aegistudio.resonance.jui.resource.ResourceModel;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame
@@ -24,13 +27,15 @@ public class Main extends JFrame
 	public final JButton showArrangerButton;
 	public final Arranger arranger;
 	
+	public final ResourceManager resourceManager;
+	
 	public final JButton showMixerButton;
 	
 	public final JButton showResourceManagerButton;
 	
 	public static final Color mimicBackground = new Color(0, 95, 120);
 	
-	public Main(Resonance resonance, ArrangerModel arrangerModel) throws Exception
+	public Main(Resonance resonance, ArrangerModel arrangerModel, ResourceModel resourceModel) throws Exception
 	{
 		super();
 		this.resonance = resonance;
@@ -46,8 +51,16 @@ public class Main extends JFrame
 		desktopPane.setSize(super.getWidth(), super.getHeight() - desktopPane.getHeight());
 		super.add(desktopPane);
 		
-		this.arranger = new Arranger(this, arrangerModel);
+		Point mainLocation = new Point();
+		this.setLocation(mainLocation);
+		
+		this.arranger = new Arranger(arrangerModel);
+		this.arranger.setLocation(mainLocation.x + 5, mainLocation.y + 50);
 		this.arranger.setVisible(true);
+		
+		this.resourceManager = new ResourceManager(resourceModel);
+		this.resourceManager.setLocation(mainLocation.x + 5 + getWidth() - this.resourceManager.getWidth(), mainLocation.y + 50);
+		this.resourceManager.setVisible(true);
 		
 		this.showArrangerButton = new SubwindowShowButton(arranger);
 		this.showArrangerButton.setBounds(10, this.desktopPane.getHeight() - 110, 80,  80);
@@ -61,7 +74,7 @@ public class Main extends JFrame
 		this.showMixerButton.setIcon(new ImageIcon(ImageIO.read(new File("res/mixer.png")).getScaledInstance(80, 80, Image.SCALE_SMOOTH)));
 		this.desktopPane.add(showMixerButton);
 		
-		this.showResourceManagerButton = new SubwindowShowButton(null);
+		this.showResourceManagerButton = new SubwindowShowButton(resourceManager);
 		this.showResourceManagerButton.setBounds(190, this.desktopPane.getHeight() - 110, 80, 80);
 		this.showResourceManagerButton.setToolTipText("Resource Manager");
 		this.desktopPane.add(showResourceManagerButton);

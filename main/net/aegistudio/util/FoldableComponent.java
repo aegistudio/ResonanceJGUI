@@ -126,4 +126,9 @@ public class FoldableComponent extends Container
 	{
 		this.foldingObject.setBackground(bg);
 	}
+	
+	public void setForeground(Color bg)
+	{
+		this.foldingObject.setForeground(bg);
+	}
 }

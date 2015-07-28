@@ -10,6 +10,7 @@ import net.aegistudio.resonance.jui.measure.PaddingMeasuredPanel;
 @SuppressWarnings("serial")
 public abstract class ClipStrip extends PaddingMeasuredPanel
 {
+	static Cursor duplicateCursor = new Cursor(Cursor.TEXT_CURSOR);
 	static Cursor crossCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
 	static Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
 	
@@ -24,12 +25,21 @@ public abstract class ClipStrip extends PaddingMeasuredPanel
 				if(me.getButton() == MouseEvent.BUTTON1)
 					if(accept(model.current()))
 						model.insertClip(sectionPanel, ruler.getBeat(me.getX()));
+				
+				if(me.getButton() == MouseEvent.BUTTON3)
+				{
+					model.endDuplication();
+					setCursor(crossCursor);
+				}
 			}
 			
 			public void mouseEntered(MouseEvent e)
 			{
 				if(accept(model.current()))
-					setCursor(crossCursor);
+				{
+					if(model.isDuplicating()) setCursor(duplicateCursor);
+					else setCursor(crossCursor);
+				}
 				else setCursor(normalCursor);
 			}
 		});

@@ -13,6 +13,7 @@ import net.aegistudio.resonance.channel.Score;
 import net.aegistudio.resonance.channel.ScoreClip;
 import net.aegistudio.resonance.jui.measure.MeasureRuler;
 import net.aegistudio.resonance.jui.measure.MeasuredPanel;
+import net.aegistudio.resonance.jui.resource.ResourceModel;
 import net.aegistudio.resonance.mixer.Track;
 import net.aegistudio.resonance.music.MusicFacade;
 import net.aegistudio.resonance.plugin.Plugin;
@@ -23,11 +24,13 @@ import net.aegistudio.scroll.ScrollPane;
 public class ArrangerLogic implements ArrangerModel
 {
 	protected final MusicFacade musicLayer;
+	protected final ResourceModel resourceModel;
 	
-	public ArrangerLogic(MusicFacade musicLayer)
+	public ArrangerLogic(MusicFacade musicLayer, ResourceModel resourceModel)
 	{
 		this.musicLayer = musicLayer;
 		this.musicLayer.getMixer().renameMaster("<master>");
+		this.resourceModel = resourceModel;
 	}
 	
 	protected String getNextDefaultName(Class<? extends Channel> channelType) {
@@ -148,25 +151,41 @@ public class ArrangerLogic implements ArrangerModel
 		this.ruler = ruler;
 	}
 
+	Object currentResource;
+	Clip currentClip;
+	Clip duplicateClip;
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Clip current() {
-		return new ScoreClip(musicLayer.getScoreHolder())
+		if(duplicateClip != null) return duplicateClip;
+		Object newCurrentResource = resourceModel.getCurrentResource();
+		if(newCurrentResource != currentResource)
 		{
+			currentClip = null;
+			currentResource = newCurrentResource;
+			if(currentResource != null)
 			{
-				super.scoreEntry = new NamedEntry<Score>("Test", new Score());
-				this.clipLength = 4.0;
+				if(currentResource instanceof KeywordEntry)
+				{
+					Object value = ((KeywordEntry) currentResource).getValue();
+					if(value instanceof Score)
+					{
+						currentClip = new ScoreClip(musicLayer.getScoreHolder());
+						((ScoreClip)currentClip).setScore((String)((KeywordEntry) currentResource).getKeyword());
+					}
+				}
 			}
-		};
+		}
+		return currentClip;
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void insertClip(ChannelSection channel, double location)
 	{
 		if(current() instanceof ScoreClip)
 		{
 			((MeasuredPanel)channel.parent.getMainScroll())
-				.add(new ScoreClipComponent(this, channel, new KeywordArray.DefaultKeywordEntry<Double, ScoreClip>(location, (ScoreClip)current()), ruler));
+				.add(new ScoreClipComponent(this, channel, new KeywordArray.DefaultKeywordEntry<Double, ScoreClip>(location, ((ScoreClip)current()).clone()), ruler));
 		}
 		((MeasuredPanel)channel.parent.getMainScroll())
 			.recalculateMeasure();
@@ -176,18 +195,17 @@ public class ArrangerLogic implements ArrangerModel
 	public KeywordEntry<Double, Clip> trim(ClipComponent clip, double offset, double length) {
 		ScoreClip sclip = (ScoreClip)clip.clipEntry.getValue();
 		(sclip).trim(sclip.getLength() + length - offset, sclip.getLength() + offset);
-		return new KeywordArray.DefaultKeywordEntry<Double, Clip>(clip.start() + offset, sclip);
+		return new KeywordArray.DefaultKeywordEntry<Double, Clip>(Math.max(clip.start() + offset, 0.0), sclip);
 	}
 
 	@Override
 	public KeywordEntry<Double, Clip> move(ClipComponent clip, double delta) {
-		return new KeywordArray.DefaultKeywordEntry<Double, Clip>(clip.start() + delta, clip.clipEntry.getValue());
+		return new KeywordArray.DefaultKeywordEntry<Double, Clip>(Math.max(clip.start() + delta, 0.0), clip.clipEntry.getValue());
 	}
 
 	@Override
 	public void duplicate(Clip clip) {
-		// TODO Auto-generated method stub
-		
+		duplicateClip = clip;
 	}
 
 	@Override
@@ -211,5 +229,15 @@ public class ArrangerLogic implements ArrangerModel
 	@Override
 	public void setCurrentBeatPosition(double beatPosition) {
 		musicLayer.setBeatPosition(beatPosition);
+	}
+
+	@Override
+	public boolean isDuplicating() {
+		return duplicateClip != null;
+	}
+
+	@Override
+	public void endDuplication() {
+		duplicateClip = null;
 	}
 }

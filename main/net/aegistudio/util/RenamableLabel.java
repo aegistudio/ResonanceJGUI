@@ -1,5 +1,6 @@
 package net.aegistudio.util;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -110,5 +111,11 @@ public abstract class RenamableLabel extends JPanel
 	public String getName()
 	{
 		return name;
+	}
+	
+	public void setForeground(Color fg)
+	{
+		if(this.nameLabel != null)
+			this.nameLabel.setForeground(fg);
 	}
 }

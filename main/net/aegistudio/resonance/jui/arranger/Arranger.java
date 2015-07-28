@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 
-import net.aegistudio.resonance.jui.Main;
 import net.aegistudio.resonance.jui.measure.MeasureRuler;
 import net.aegistudio.resonance.jui.measure.MeasuredPanel;
 import net.aegistudio.scroll.RowPanel;
@@ -16,7 +15,6 @@ import net.aegistudio.scroll.ScrollPane;
 @SuppressWarnings("serial")
 public class Arranger extends JFrame
 {
-	protected final Main main;
 	public final ScrollPane arrangePane; 
 	public final RowPanel channelPane;
 	public final MeasuredPanel clipPane;
@@ -27,9 +25,8 @@ public class Arranger extends JFrame
 	
 	protected final ArrangerModel model;
 	
-	public Arranger(Main main, ArrangerModel model)
+	public Arranger(ArrangerModel model)
 	{
-		this.main = main;
 		this.model = model;
 		
 		this.arrangeMenu = new ArrangeMenu(model);

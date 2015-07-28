@@ -229,4 +229,16 @@ public class ArrangerModelDecoy implements ArrangerModel
 		return channels.getTargetTrack(channelname);
 	}
 
+	@Override
+	public boolean isDuplicating() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void endDuplication() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

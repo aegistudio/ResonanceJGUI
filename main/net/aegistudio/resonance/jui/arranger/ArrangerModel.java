@@ -36,6 +36,8 @@ public interface ArrangerModel {
 	// Clip Related
 	public Clip current();
 	public void duplicate(Clip clip);
+	public boolean isDuplicating();
+	public void endDuplication();
 	public void insertClip(ChannelSection channel, double location);
 	public void removeClip(ChannelSection channel, ClipComponent clip);
 	public KeywordEntry<Double, Clip> trim(ClipComponent clip, double offset, double length);

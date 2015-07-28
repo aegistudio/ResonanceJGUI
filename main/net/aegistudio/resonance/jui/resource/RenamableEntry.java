@@ -1,5 +1,6 @@
 package net.aegistudio.resonance.jui.resource;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -12,8 +13,6 @@ import net.aegistudio.util.RenamableLabel;
 @SuppressWarnings("serial")
 public abstract class RenamableEntry extends FoldableComponent
 {
-	
-	public static long waitInterval = 200L;
 	
 	public RenamableEntry(String icon, String initialName) {
 		super(null);
@@ -42,35 +41,15 @@ public abstract class RenamableEntry extends FoldableComponent
 					doShowMenu(RenamableEntry.this, me.getX(), me.getY());
 			}
 			
-			int clickCountDenotation = 0;
 			public void mouseClicked(MouseEvent me)
 			{
 				if(me.getButton() == MouseEvent.BUTTON1)
 				{
 					if(me.getClickCount() == 1)
-					{
-						clickCountDenotation = 1;
-						new Thread()
-						{
-							public void run()
-							{
-								try {
-									Thread.sleep(waitInterval);
-									if(clickCountDenotation == 1)
-										doUse();
-									clickCountDenotation = 0;
-								} catch (InterruptedException e) {
-								
-								}
-								
-							}
-						}.start();
-					}
+						doUse();
 					else if(me.getClickCount() == 2)
-					{
-						clickCountDenotation = 0;
 						doEdit();
-					}
+					
 				}
 			}
 		});
@@ -86,5 +65,10 @@ public abstract class RenamableEntry extends FoldableComponent
 	
 	public void doRename(){
 		((RenamableLabel)super.foldingObject).beginRename();
+	}
+	
+	public void setUsed(boolean isUsed){
+		setBackground(isUsed? Color.BLUE : null);
+		setForeground(isUsed? Color.WHITE : Color.BLACK);
 	}
 }

@@ -29,7 +29,7 @@ public class ScoreEntry extends RenamableEntry{
 	}
 	
 	public void doUse(){
-		System.out.println("Use");		
+		resModel.requestUseScore(this);
 	}
 	
 	@Override

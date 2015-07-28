@@ -16,6 +16,7 @@ public class ResourceManager extends JFrame
 	public ResourceManager(ResourceModel resModel)
 	{
 		super();
+		super.setAlwaysOnTop(true);
 		super.setTitle("Resource Manager");
 		super.setSize(300, 500);
 		

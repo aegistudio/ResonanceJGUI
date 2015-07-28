@@ -1,4 +1,4 @@
-package net.aegistudio.jui.test.resource;
+package net.aegistudio.resonance.jui.resource;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,27 +7,16 @@ import java.util.Map.Entry;
 
 import net.aegistudio.resonance.KeywordArray.KeywordEntry;
 import net.aegistudio.resonance.NamedHolder;
-import net.aegistudio.resonance.channel.Note;
 import net.aegistudio.resonance.channel.Score;
 import net.aegistudio.resonance.jui.pianoroll.PianoRoll;
 import net.aegistudio.resonance.jui.pianoroll.PianoRollLogic;
-import net.aegistudio.resonance.jui.resource.RenamableEntry;
-import net.aegistudio.resonance.jui.resource.ResourceModel;
-import net.aegistudio.resonance.jui.resource.ScoreCatalog;
-import net.aegistudio.resonance.jui.resource.ScoreEntry;
 
-public class ResourceModelDecoy implements ResourceModel
-{
-	public NamedHolder<Score> scoreHolder = new NamedHolder<Score>("score", false)
+public class ResourceLogic implements ResourceModel{
+	
+	NamedHolder<Score> scoreHolder;
+	public ResourceLogic(NamedHolder<Score> scoreHolder)
 	{
-		@Override
-		protected Score newObject(Class<?> clazz) {
-			return new Score();
-		}
-	};
-	{
-		Score theScore = scoreHolder.create("TestScore");
-		theScore.addNote(0, new Note((byte)30, (byte)127, 4.0));
+		this.scoreHolder = scoreHolder;
 	}
 	
 	Object currentResource = null;
@@ -42,13 +31,11 @@ public class ResourceModelDecoy implements ResourceModel
 	
 	@Override
 	public void init(ScoreCatalog scoreCatalog) {
-		System.out.println("ResourceModelDecoy.init");
 		this.scoreCatalog = scoreCatalog;
 	}
 
 	@Override
 	public void createScore() {
-		System.out.println("ResourceModelDecoy.createScore");
 		String newName = this.getNextAvailableScoreName();
 		scoreHolder.create(newName);
 		KeywordEntry<String, Score> entry = scoreHolder.getEntry(newName);
@@ -67,7 +54,6 @@ public class ResourceModelDecoy implements ResourceModel
 
 	@Override
 	public void removeScore(ScoreEntry entry) {
-		System.out.println("ResourceModelDecoy.remove");
 		scoreHolder.remove(entry.score.getKeyword());
 		scoreCatalog.removeOffspring(entry);
 	}
@@ -75,7 +61,6 @@ public class ResourceModelDecoy implements ResourceModel
 	@Override
 	public void renameScore(ScoreEntry entry, String oldName, String newName) throws Exception
 	{
-		System.out.println("ResourceModelDecoy.rename");
 		try
 		{
 			scoreHolder.rename(oldName, newName);

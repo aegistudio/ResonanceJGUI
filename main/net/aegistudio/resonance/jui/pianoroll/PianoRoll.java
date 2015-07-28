@@ -30,6 +30,7 @@ public class PianoRoll extends JFrame
 		MeasureRuler ruler = new MeasureRuler();
 		RowPanel rowPanel = new RowPanel();
 		
+		super.setAlwaysOnTop(true);
 		super.setTitle("Piano Roll");
 		super.setSize(800, 500);
 		
