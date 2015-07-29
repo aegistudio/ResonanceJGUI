@@ -50,6 +50,12 @@ public class ClipComponentTest {
 				// TODO Auto-generated method stub
 				return 0;
 			}
+
+			@Override
+			public void reset() {
+				// TODO Auto-generated method stub
+				
+			}
 		}), new MeasureRuler());
 		
 		clipComponent.setBackground(Color.GREEN.darker());

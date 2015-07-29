@@ -43,5 +43,23 @@ public class Playback extends JFrame{
 				});
 			}
 		});
+		
+		new Thread()
+		{
+			public void run()
+			{
+				while(true) try
+				{
+					System.out.println(resonance.musicFacade.getBeatPosition() + "/" + resonance.musicFacade.getLength());
+					Thread.sleep(100L);
+				}
+				catch(Exception e)
+				{
+					
+				}
+			}
+		}
+		.start();
+	
 	}
 }
