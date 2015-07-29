@@ -137,7 +137,7 @@ public class ArrangerLogic implements ArrangerModel
 		{
 			ScoreClip sclip = (ScoreClip)clipInstance;
 			removeScoreClip(channelSection, clip.clipEntry);
-			(sclip).trim(sclip.getLength() + length - offset, sclip.getLength() + offset);
+			sclip.trim(sclip.getLength() + length - offset, - offset);
 			KeywordEntry<Double, Clip> entry = new KeywordArray.DefaultKeywordEntry<Double, Clip>(Math.max(clip.start() + offset, 0.0), sclip);
 			insertScoreClip(channelSection, entry);
 			return entry;
