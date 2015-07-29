@@ -80,5 +80,7 @@ public class Main extends JFrame
 		this.showResourceManagerButton.setBounds(190, this.desktopPane.getHeight() - 110, 80, 80);
 		this.showResourceManagerButton.setToolTipText("Resource Manager");
 		this.desktopPane.add(showResourceManagerButton);
+		
+		new Playback(resonance, arranger.ruler).setVisible(true);
 	}
 }

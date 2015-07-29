@@ -36,6 +36,5 @@ public class MainTest {
 		
 		resonance.setEnvironment(new Environment(44100.0f, 2, new Encoding(Encoding.BITDEPTH_BIT32 | Encoding.WORDTYPE_INT | Encoding.ENDIAN_BIG),
 				128, 16), new MixerDevice(AudioSystem.getMixerInfo()[0]));
-		new Playback(resonance).setVisible(true);
 	}
 }
