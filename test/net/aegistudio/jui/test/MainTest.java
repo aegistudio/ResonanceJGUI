@@ -8,7 +8,6 @@ import net.aegistudio.resonance.Environment;
 import net.aegistudio.resonance.Resonance;
 import net.aegistudio.resonance.device.MixerDevice;
 import net.aegistudio.resonance.jui.Main;
-import net.aegistudio.resonance.jui.Playback;
 import net.aegistudio.resonance.jui.arranger.ArrangerLogic;
 import net.aegistudio.resonance.jui.arranger.ArrangerModel;
 import net.aegistudio.resonance.jui.resource.ResourceLogic;

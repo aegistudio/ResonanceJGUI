@@ -3,6 +3,7 @@ package net.aegistudio.resonance.jui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -30,6 +31,10 @@ public class Playback extends JFrame{
 	ImageIcon stopAtTheEnd = new ImageIcon("res/stop_at_the_end.png");
 	ImageIcon loop = new ImageIcon("res/loop.png");
 	
+	ImageIcon endlessMin;
+	ImageIcon stopAtTheEndMin;
+	ImageIcon loopMin;
+	
 	int mode = 0;	//0 = ENDLESS, 1 = STOP_AT_THE_END, 2 = LOOP
 	
 	public Playback(Resonance resonance, MeasureRuler ruler)
@@ -37,7 +42,12 @@ public class Playback extends JFrame{
 		super();
 		super.setSize(755, 80);
 		super.setLayout(null);
+		super.setAlwaysOnTop(true);
 		super.setTitle("Playback");
+		
+		endlessMin = new ImageIcon(endless.getImage().getScaledInstance(20, 20, Image.SCALE_REPLICATE));
+		stopAtTheEndMin = new ImageIcon(stopAtTheEnd.getImage().getScaledInstance(20, 20, Image.SCALE_REPLICATE));
+		loopMin = new ImageIcon(loop.getImage().getScaledInstance(20, 20, Image.SCALE_REPLICATE));
 		
 		addKeyListener(new KeyAdapter(){
 			public void keyPressed(KeyEvent ke)
@@ -133,7 +143,7 @@ public class Playback extends JFrame{
 				setIcon(endless);
 				JMenuItem playModeItem = new JMenuItem("Play Mode");
 				playModeItem.setForeground(Color.GREEN.darker());
-				playModeMenu.setEnabled(false);
+				playModeItem.setEnabled(false);
 				playModeMenu.add(playModeItem);
 				playModeMenu.addSeparator();
 				
@@ -148,6 +158,7 @@ public class Playback extends JFrame{
 						playMode.setToolTipText("Endless");
 					}
 				});
+				endlessItem.setIcon(endlessMin);
 				endlessItem.setEnabled(false);
 				playModeMenu.add(endlessItem);
 				
@@ -162,9 +173,9 @@ public class Playback extends JFrame{
 						playMode.setToolTipText("Stop At The End");
 					}
 				});
+				stopAtTheEndItem.setIcon(stopAtTheEndMin);
 				playModeMenu.add(stopAtTheEndItem);
 
-				
 				loopItem = new JMenuItem("Loop");
 				loopItem.addActionListener(new ActionListener(){
 					@Override
@@ -176,6 +187,7 @@ public class Playback extends JFrame{
 						playMode.setToolTipText("Loop");
 					}
 				});
+				loopItem.setIcon(loopMin);
 				playModeMenu.add(loopItem);
 				
 				addMouseListener(new MouseAdapter(){
