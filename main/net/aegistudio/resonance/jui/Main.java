@@ -44,7 +44,7 @@ public class Main extends JFrame
 	{
 		super();
 		this.resonance = resonance;
-		super.setTitle("Resonance Java Gui");
+		super.setTitle("Resonance");
 		super.setSize(1280, 768);
 		super.setDefaultCloseOperation(EXIT_ON_CLOSE);	// Should add confirm message if closing!
 		

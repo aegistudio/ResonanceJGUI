@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
 
+import net.aegistudio.util.RandomPanel;
+
 public class RowPanel implements Content
 {
 	protected int sectionWidth = 200;

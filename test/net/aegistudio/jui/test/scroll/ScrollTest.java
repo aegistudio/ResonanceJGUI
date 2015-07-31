@@ -16,9 +16,9 @@ import net.aegistudio.resonance.jui.measure.Measurable;
 import net.aegistudio.resonance.jui.measure.MeasureRuler;
 import net.aegistudio.resonance.jui.measure.MeasuredPanel;
 import net.aegistudio.scroll.Content;
-import net.aegistudio.scroll.RandomPanel;
 import net.aegistudio.scroll.RowPanel;
 import net.aegistudio.scroll.ScrollPane;
+import net.aegistudio.util.RandomPanel;
 
 @SuppressWarnings("serial")
 class MeasuredBlock extends Component implements Measurable

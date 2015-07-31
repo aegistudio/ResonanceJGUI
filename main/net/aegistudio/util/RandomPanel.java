@@ -1,10 +1,12 @@
-package net.aegistudio.scroll;
+package net.aegistudio.util;
 
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+
+import net.aegistudio.scroll.Slideshow;
 
 @SuppressWarnings("serial")
 public class RandomPanel extends Container implements Slideshow
@@ -50,8 +52,10 @@ public class RandomPanel extends Container implements Slideshow
 		}
 		
 		
-		for(Component c : this.getComponents())
+		Component[] components = this.getComponents();
+		for(int i = components.length - 1; i >= 0; i --)
 		{
+			Component c = components[i];
 			int vc_x0 = c.getX();
 			int vc_y0 = c.getY();
 			int vc_x1 = vc_x0 + c.getPreferredSize().width;

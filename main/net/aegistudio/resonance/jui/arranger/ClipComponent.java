@@ -88,6 +88,7 @@ public class ClipComponent extends Component implements Measurable
 			
 			public void mousePressed(MouseEvent event)
 			{
+				getParent().setComponentZOrder(ClipComponent.this, 0);
 				if(event.getButton() == MouseEvent.BUTTON1)
 				{
 					processCode = potentialCode;

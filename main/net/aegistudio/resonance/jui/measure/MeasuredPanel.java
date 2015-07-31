@@ -4,7 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
-import net.aegistudio.scroll.RandomPanel;
+import net.aegistudio.util.RandomPanel;
 
 @SuppressWarnings("serial")
 public class MeasuredPanel extends RandomPanel
