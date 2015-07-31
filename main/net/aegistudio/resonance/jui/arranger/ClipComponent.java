@@ -34,12 +34,14 @@ public class ClipComponent extends Component implements Measurable
 	
 	public KeywordEntry<Double, ? extends Clip> clipEntry;
 	public final MeasureRuler ruler;
+	public final ChannelSection channel;
 	
 	public ClipComponent(ArrangerModel model, final ChannelSection channel, KeywordEntry<Double, ? extends Clip> clipEntry, MeasureRuler ruler)
 	{
 		this.model = model;
 		this.clipEntry = clipEntry;
 		this.ruler = ruler;
+		this.channel = channel;
 		
 		this.clipDenotation.setOpaque(false);
 		
@@ -98,7 +100,7 @@ public class ClipComponent extends Component implements Measurable
 					addMouseMotionListener(mouseAdapter);
 				}
 				else if(event.getButton() == MouseEvent.BUTTON3)
-					model.removeClip(channel, ClipComponent.this);
+					actionRemoval();
 			}
 			
 			public void mouseClicked(MouseEvent event)
@@ -190,6 +192,11 @@ public class ClipComponent extends Component implements Measurable
 	public double start()
 	{
 		return this.clipEntry.getKeyword();
+	}
+	
+	public void actionRemoval()
+	{
+		model.removeClip(channel, ClipComponent.this);
 	}
 	
 	public double duration()

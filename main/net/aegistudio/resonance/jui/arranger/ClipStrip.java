@@ -1,6 +1,8 @@
 package net.aegistudio.resonance.jui.arranger;
 
+import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -29,7 +31,9 @@ public abstract class ClipStrip extends PaddingMeasuredPanel
 				if(me.getButton() == MouseEvent.BUTTON3)
 				{
 					model.endDuplication();
-					setCursor(crossCursor);
+					if(accept(model.current()))
+						setCursor(crossCursor);
+					else setCursor(normalCursor);
 				}
 			}
 			
@@ -37,10 +41,41 @@ public abstract class ClipStrip extends PaddingMeasuredPanel
 			{
 				if(accept(model.current()))
 				{
-					if(model.isDuplicating()) setCursor(duplicateCursor);
+					if(model.isDuplicating())
+						setCursor(duplicateCursor);
 					else setCursor(crossCursor);
 				}
 				else setCursor(normalCursor);
+			}
+		});
+		
+		this.addMouseListener(new MouseAdapter()
+		{
+			int button = 0;
+			public void mousePressed(MouseEvent me){
+				button = me.getButton();
+				addMouseMotionListener(this);
+			}
+			
+			public void mouseDragged(MouseEvent me)
+			{
+				if(button == MouseEvent.BUTTON1)
+					if(model.isDuplicating())
+						if(!(getComponentAt(me.getPoint()) instanceof ClipComponent)){
+							if(accept(model.current()))
+								model.insertClip(sectionPanel, ruler.getBeat(me.getX()));
+						}
+				if(button == MouseEvent.BUTTON3)
+				{
+					Component target = getComponentAt(me.getPoint());
+					if(target instanceof ClipComponent)
+						((ClipComponent) target).actionRemoval();
+				}
+			}
+			
+			public void mouseReleased(MouseEvent me){
+				button = 0;
+				removeMouseMotionListener(this);
 			}
 		});
 	}
