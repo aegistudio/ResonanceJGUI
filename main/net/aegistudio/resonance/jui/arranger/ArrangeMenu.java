@@ -15,17 +15,19 @@ import net.aegistudio.resonance.channel.MidiChannel;
 
 @SuppressWarnings("serial")
 public class ArrangeMenu extends JPopupMenu{
+
+	protected JMenuItem arrangeTitle;
 	
 	protected JMenuItem newInstrumentChannel;
 	protected JMenuItem newAudioChannel;
 	protected JMenuItem newAutomation;
 	
 	protected JMenuItem eraseChannel;
-	protected JMenuItem renameChannel;
+	protected JMenuItem renameChannel; 
 	
 	public ArrangeMenu(final ArrangerModel arrangerModel)
 	{
-		JMenuItem arrangeTitle = new JMenuItem("Arrange");
+		arrangeTitle = new JMenuItem("Arrange");
 		arrangeTitle.setForeground(Color.ORANGE.darker());
 		arrangeTitle.setEnabled(false);
 		this.add(arrangeTitle);
@@ -87,11 +89,13 @@ public class ArrangeMenu extends JPopupMenu{
 		if(c.getComponentAt(x, y) instanceof ChannelSection)
 		{
 			target = (ChannelSection) c.getComponentAt(x, y);
+			arrangeTitle.setText(target.getChannelName());
 			eraseChannel.setEnabled(true);
 			renameChannel.setEnabled(true);
 		}
 		else
 		{
+			arrangeTitle.setText("Arrange");
 			eraseChannel.setEnabled(false);
 			renameChannel.setEnabled(false);
 		}

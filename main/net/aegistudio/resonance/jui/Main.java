@@ -12,6 +12,8 @@ import net.aegistudio.resonance.Encoding;
 import net.aegistudio.resonance.Environment;
 import net.aegistudio.resonance.Resonance;
 import net.aegistudio.resonance.device.MixerDevice;
+import net.aegistudio.resonance.io.OutputController;
+import net.aegistudio.resonance.io.OutputFacade;
 import net.aegistudio.resonance.jui.arranger.Arranger;
 import net.aegistudio.resonance.jui.arranger.ArrangerLogic;
 import net.aegistudio.resonance.jui.arranger.ArrangerModel;
@@ -19,8 +21,6 @@ import net.aegistudio.resonance.jui.resource.ResourceLogic;
 import net.aegistudio.resonance.jui.resource.ResourceManager;
 import net.aegistudio.resonance.jui.resource.ResourceModel;
 import net.aegistudio.resonance.music.MusicController;
-import net.aegistudio.resonance.output.OutputController;
-import net.aegistudio.resonance.output.OutputFacade;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame

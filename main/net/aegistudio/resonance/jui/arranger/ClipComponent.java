@@ -36,6 +36,8 @@ public class ClipComponent extends Component implements Measurable
 	public final MeasureRuler ruler;
 	public final ChannelSection channel;
 	
+	protected int loadDifference = 0;
+	
 	public ClipComponent(ArrangerModel model, final ChannelSection channel, KeywordEntry<Double, ? extends Clip> clipEntry, MeasureRuler ruler)
 	{
 		this.model = model;
@@ -124,6 +126,8 @@ public class ClipComponent extends Component implements Measurable
 						
 						if(getParent() instanceof MeasuredPanel)
 							((MeasuredPanel) getParent()).recalculateMeasure();
+
+						loadDifference = 0;
 					}
 					catch(Exception e)
 					{
@@ -146,8 +150,9 @@ public class ClipComponent extends Component implements Measurable
 					if(me.getLocationOnScreen().x - pointOnScreen.x + 1 < originalSize.width)
 					{
 						//Trim
-						setLocation(beginPoint.x + me.getLocationOnScreen().x - pointOnScreen.x, beginPoint.y);
-						setSize(new Dimension(originalSize.width - (me.getLocationOnScreen().x - pointOnScreen.x), originalSize.height));
+						loadDifference = me.getLocationOnScreen().x - pointOnScreen.x;
+						setLocation(beginPoint.x + loadDifference, beginPoint.y);
+						setSize(new Dimension(originalSize.width - loadDifference, originalSize.height));
 					}
 				}
 				else if(processCode == 2)
@@ -162,6 +167,7 @@ public class ClipComponent extends Component implements Measurable
 		};
 		
 		this.addMouseListener(mouseAdapter);
+		length = duration();
 	}
 	
 	public void setSize(Dimension s)
@@ -172,8 +178,16 @@ public class ClipComponent extends Component implements Measurable
 	
 	int cornerSize = 7;
 	
+	double length;
+	
 	public void paint(Graphics g)
 	{
+		if(duration() != length)
+		{
+			length = duration();
+			if(getParent() instanceof MeasuredPanel)
+				((MeasuredPanel) getParent()).recalculateMeasure();
+		}
 		g.setColor(this.getBackground());
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
@@ -183,10 +197,17 @@ public class ClipComponent extends Component implements Measurable
 		
 		g.fillRect(getWidth() - cornerSize, getHeight() - cornerSize, cornerSize, cornerSize);
 		
+		this.draw(g);
+		
 		this.clipDenotation.setForeground(this.getForeground());
 		
 		this.clipDenotation.setSize(getWidth() - 8, 20);
 		this.clipDenotation.paint(g.create(4, 2, getWidth(), 20));
+	}
+	
+	protected void draw(Graphics g)
+	{
+		
 	}
 	
 	public double start()
