@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -85,7 +84,7 @@ public class ScorePopupMenu extends JPopupMenu
 				FileNameExtensionFilter midiFilter 
 					= new FileNameExtensionFilter("Sequence (*.mid)", "mid");
 				midiChooser.setFileFilter(midiFilter);
-				int returnVal = midiChooser.showOpenDialog(scoreEntry);
+				int returnVal = midiChooser.showOpenDialog(ScorePopupMenu.this.getInvoker());
 			    if(returnVal == JFileChooser.APPROVE_OPTION) try {
 			    	resModel.importScore(midiChooser.getSelectedFile());
 			    }
