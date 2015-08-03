@@ -1,5 +1,6 @@
 package net.aegistudio.resonance.jui.resource;
 
+import java.io.File;
 import java.util.Collection;
 
 import net.aegistudio.resonance.KeywordArray.KeywordEntry;
@@ -19,4 +20,6 @@ public interface ResourceModel {
 	public void renameScore(ScoreEntry entry, String oldName, String newName) throws Exception;
 	public void requestScoreEdit(ScoreEntry entry);
 	public void requestUseScore(ScoreEntry entry);
+
+	public void importScore(File file) throws Exception;		//Import Score From Midi File!
 }

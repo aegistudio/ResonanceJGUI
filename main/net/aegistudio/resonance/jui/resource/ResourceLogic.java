@@ -1,13 +1,19 @@
 package net.aegistudio.resonance.jui.resource;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Track;
+
 import net.aegistudio.resonance.KeywordArray.KeywordEntry;
 import net.aegistudio.resonance.NamedHolder;
 import net.aegistudio.resonance.channel.Score;
+import net.aegistudio.resonance.io.midi.MidiConverter;
 import net.aegistudio.resonance.jui.pianoroll.PianoRoll;
 import net.aegistudio.resonance.jui.pianoroll.PianoRollLogic;
 
@@ -121,5 +127,34 @@ public class ResourceLogic implements ResourceModel{
 		currentResource = resource;
 		
 		entry.setUsed(true);
+	}
+
+	@Override
+	public void importScore(File file) throws Exception{
+		Sequence sequence = MidiSystem.getSequence(file);
+		int ticksPerQuarter = sequence.getResolution();
+		Track[] tracks = sequence.getTracks();
+		MidiConverter midiConverter = new MidiConverter();
+		String truncatedName = file.getName();
+		if(truncatedName.endsWith(".mid")) 
+			truncatedName = truncatedName.substring(0, truncatedName.length() - 4);
+		for(Track track : tracks)
+		{
+			String scoreName = truncatedName;
+			Score score = scoreHolder.get(scoreName);
+			int index = 1;
+			while(score != null)
+			{
+				scoreName = String.format("%s#%d", truncatedName, index);
+				score = scoreHolder.get(scoreName);
+				index ++;
+			}
+			score = scoreHolder.create(scoreName);
+			midiConverter.decapsulateTrack(score, track, ticksPerQuarter);
+			
+			KeywordEntry<String, Score> entry = scoreHolder.getEntry(scoreName);
+			scoreCatalog.addOffspring(new ScoreEntry(this, entry));
+			scoreCatalog.setFold(false);
+		}
 	}
 }

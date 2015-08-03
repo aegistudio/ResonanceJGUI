@@ -5,9 +5,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 @SuppressWarnings("serial")
 public class ScorePopupMenu extends JPopupMenu
@@ -17,9 +20,12 @@ public class ScorePopupMenu extends JPopupMenu
 	JMenuItem createScore = new JMenuItem("Create Score");
 	JMenuItem eraseScore = new JMenuItem("Erase Current Score");
 	JMenuItem renameScore = new JMenuItem("Rename Score");
+
+	JMenuItem importScore = new JMenuItem("Import Score");
 	
 	JMenuItem editScore = new JMenuItem("Edit Current Score");
 	JMenuItem useScore = new JMenuItem("Use Score");
+	
 	
 	protected final ScoreEntry scoreEntry;
 	public ScorePopupMenu(ResourceModel resModel, ScoreEntry scoreEntry){
@@ -43,7 +49,7 @@ public class ScorePopupMenu extends JPopupMenu
 			}
 		});
 		super.add(createScore);
-		
+				
 		eraseScore.setIcon(new ImageIcon("res/erase.png"));
 		eraseScore.addActionListener(new ActionListener(){
 			@Override
@@ -67,6 +73,32 @@ public class ScorePopupMenu extends JPopupMenu
 		});
 		super.add(renameScore);
 		
+		super.addSeparator();
+		
+		importScore.addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser midiChooser = new JFileChooser();
+				midiChooser.changeToParentDirectory();
+				FileNameExtensionFilter midiFilter 
+					= new FileNameExtensionFilter("Sequence (*.mid)", "mid");
+				midiChooser.setFileFilter(midiFilter);
+				int returnVal = midiChooser.showOpenDialog(scoreEntry);
+			    if(returnVal == JFileChooser.APPROVE_OPTION) try {
+			    	resModel.importScore(midiChooser.getSelectedFile());
+			    }
+			    catch(Exception e) {
+			    	JOptionPane.showConfirmDialog(midiChooser,
+							String.format("Cannot import score from this file! Caused by: \n%s", e.getMessage()),
+							"Import failure!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+			    }
+			}
+			
+		});
+		super.add(importScore);
+
 		super.addSeparator();
 		
 		if(scoreEntry == null) editScore.setEnabled(false);

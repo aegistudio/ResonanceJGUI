@@ -1,5 +1,6 @@
 package net.aegistudio.jui.test.resource;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -136,5 +137,11 @@ public class ResourceModelDecoy implements ResourceModel
 		currentResource = resource;
 		
 		entry.setUsed(true);
+	}
+
+	@Override
+	public void importScore(File file) {
+		// TODO Auto-generated method stub
+		
 	}
 }
