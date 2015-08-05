@@ -129,12 +129,12 @@ public class ResourceLogic implements ResourceModel{
 		entry.setUsed(true);
 	}
 
+	MidiConverter midiConverter = new MidiConverter();
 	@Override
 	public void importScore(File file) throws Exception{
 		Sequence sequence = MidiSystem.getSequence(file);
 		int ticksPerQuarter = sequence.getResolution();
 		Track[] tracks = sequence.getTracks();
-		MidiConverter midiConverter = new MidiConverter();
 		String truncatedName = file.getName();
 		if(truncatedName.endsWith(".mid")) 
 			truncatedName = truncatedName.substring(0, truncatedName.length() - 4);
@@ -156,5 +156,14 @@ public class ResourceLogic implements ResourceModel{
 			scoreCatalog.addOffspring(new ScoreEntry(this, entry));
 			scoreCatalog.setFold(false);
 		}
+	}
+
+	@Override
+	public void exportScore(ScoreEntry entry, File file) throws Exception {
+		Sequence sequence = new Sequence(Sequence.PPQ, 480);
+		int ticksPerQuarterNote = sequence.getResolution();
+		Track midi0Track = sequence.createTrack();
+		midiConverter.encapsulateTrack(midi0Track, entry.score.getValue(), ticksPerQuarterNote);
+		MidiSystem.write(sequence, 0, file);
 	}
 }

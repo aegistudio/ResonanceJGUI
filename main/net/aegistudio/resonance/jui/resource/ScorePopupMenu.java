@@ -3,6 +3,7 @@ package net.aegistudio.resonance.jui.resource;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -10,6 +11,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import net.aegistudio.resonance.jui.Overwrite;
 
 @SuppressWarnings("serial")
 public class ScorePopupMenu extends JPopupMenu
@@ -21,6 +24,7 @@ public class ScorePopupMenu extends JPopupMenu
 	JMenuItem renameScore = new JMenuItem("Rename Score");
 
 	JMenuItem importScore = new JMenuItem("Import Score");
+	JMenuItem exportScore = new JMenuItem("Export Score");
 	
 	JMenuItem editScore = new JMenuItem("Edit Current Score");
 	JMenuItem useScore = new JMenuItem("Use Score");
@@ -89,7 +93,7 @@ public class ScorePopupMenu extends JPopupMenu
 			    	resModel.importScore(midiChooser.getSelectedFile());
 			    }
 			    catch(Exception e) {
-			    	JOptionPane.showConfirmDialog(midiChooser,
+			    	JOptionPane.showConfirmDialog(ScorePopupMenu.this.getInvoker(),
 							String.format("Cannot import score from this file! Caused by: \n%s", e.getMessage()),
 							"Import failure!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 			    }
@@ -98,6 +102,33 @@ public class ScorePopupMenu extends JPopupMenu
 		});
 		super.add(importScore);
 
+		if(scoreEntry == null) exportScore.setEnabled(false);
+		exportScore.addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser midiChooser = new JFileChooser();
+				midiChooser.changeToParentDirectory();
+				FileNameExtensionFilter midiFilter 
+					= new FileNameExtensionFilter("Midi0 Sequence (*.mid)", "mid");
+				midiChooser.setFileFilter(midiFilter);
+				midiChooser.setSelectedFile(new File(scoreEntry.score.getKeyword().concat(".mid")));
+				int returnVal = midiChooser.showSaveDialog(ScorePopupMenu.this.getInvoker());
+			    if(returnVal == JFileChooser.APPROVE_OPTION) try {
+			    	if(new Overwrite(midiChooser.getSelectedFile()).ask(ScorePopupMenu.this.getInvoker()))
+			    		resModel.exportScore(scoreEntry, midiChooser.getSelectedFile());
+			    }
+			    catch(Exception e) {
+			    	JOptionPane.showConfirmDialog(ScorePopupMenu.this.getInvoker(),
+							String.format("Cannot export score to this file! Caused by: \n%s", e.getMessage()),
+							"Export failure!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+			    }
+			}
+			
+		});
+		super.add(exportScore);
+		
 		super.addSeparator();
 		
 		if(scoreEntry == null) editScore.setEnabled(false);

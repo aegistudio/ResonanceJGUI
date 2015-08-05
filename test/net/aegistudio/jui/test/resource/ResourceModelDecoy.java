@@ -144,4 +144,10 @@ public class ResourceModelDecoy implements ResourceModel
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void exportScore(ScoreEntry entry, File file) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
 }
