@@ -13,7 +13,7 @@ public interface ResourceModel {
 	// Gross Interface For Resourcing.
 	public Object getCurrentResource();
 	
-	// Required For Score Resouce Managing
+	// Required For Score Resource Managing
 	public Collection<? extends KeywordEntry<String, Score>> allScores();
 	public void createScore();
 	public void removeScore(ScoreEntry entry);

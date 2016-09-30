@@ -11,14 +11,12 @@ import net.aegistudio.util.FoldableComponent;
 import net.aegistudio.util.RenamableLabel;
 
 @SuppressWarnings("serial")
-public abstract class RenamableEntry extends FoldableComponent
-{
+public abstract class RenamableEntry extends FoldableComponent {
 	
 	public RenamableEntry(String icon, String initialName) {
 		super(null);
 		
-		super.foldingObject = new RenamableLabel(initialName)
-		{
+		super.foldingObject = new RenamableLabel(initialName) {
 			{
 				nameLabel.setIcon(new ImageIcon("res/midi.png"));
 				nameLabel.removeMouseListener(doubleClickRename);
@@ -65,6 +63,10 @@ public abstract class RenamableEntry extends FoldableComponent
 	
 	public void doRename(){
 		((RenamableLabel)super.foldingObject).beginRename();
+	}
+	
+	public void updateName(String newName) {
+		((RenamableLabel)super.foldingObject).updateName(newName);
 	}
 	
 	public void setUsed(boolean isUsed){

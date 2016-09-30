@@ -14,14 +14,13 @@ import net.aegistudio.resonance.KeywordArray.KeywordEntry;
 import net.aegistudio.resonance.NamedHolder;
 import net.aegistudio.resonance.channel.Score;
 import net.aegistudio.resonance.io.MidiConverter;
+import net.aegistudio.resonance.jui.Main;
 import net.aegistudio.resonance.jui.pianoroll.PianoRoll;
 import net.aegistudio.resonance.jui.pianoroll.PianoRollLogic;
 
 public class ResourceLogic implements ResourceModel{
-	
 	NamedHolder<Score> scoreHolder;
-	public ResourceLogic(NamedHolder<Score> scoreHolder)
-	{
+	public ResourceLogic(NamedHolder<Score> scoreHolder) {
 		this.scoreHolder = scoreHolder;
 	}
 	
@@ -33,6 +32,15 @@ public class ResourceLogic implements ResourceModel{
 		return currentResource;
 	}
 
+	private void removeResource(Object resource) {
+		if(resource == currentResource) useResource(null, null);
+		Main.getHistory().abandon(a -> {
+			if(a instanceof ResourceRelatedAction)
+				return ((ResourceRelatedAction)a).getResource() == resource;
+			return false;
+		});
+	}
+	
 	ScoreCatalog scoreCatalog;
 	
 	@Override
@@ -62,17 +70,39 @@ public class ResourceLogic implements ResourceModel{
 	public void removeScore(ScoreEntry entry) {
 		scoreHolder.remove(entry.score.getKeyword());
 		scoreCatalog.removeOffspring(entry);
+		removeResource(entry.score);
 	}
 
 	@Override
-	public void renameScore(ScoreEntry entry, String oldName, String newName) throws Exception
+	public void renameScore(ScoreEntry entry, final String oldName, final String newName) throws Exception
 	{
-		try
-		{
-			scoreHolder.rename(oldName, newName);
+		try {
+			
+			Main.getHistory().push(new ResourceRelatedAction() {
+				
+				@Override
+				public void redo() {
+					scoreHolder.rename(oldName, newName);
+					entry.updateName(newName);
+				}
+
+				@Override
+				public void undo() {
+					scoreHolder.rename(newName, oldName);
+					entry.updateName(oldName);
+				}
+
+				@Override
+				public Object getResource() {
+					return entry.score;
+				}
+				
+				public String toString() {
+					return "Rename score";
+				}
+			});
 		}
-		catch(RuntimeException e)
-		{
+		catch(RuntimeException e) {
 			throw new Exception(e.getMessage());
 		}
 	}
@@ -126,7 +156,8 @@ public class ResourceLogic implements ResourceModel{
 		currentEntry = entry;
 		currentResource = resource;
 		
-		entry.setUsed(true);
+		if(currentEntry != null)
+			currentEntry.setUsed(true);
 	}
 
 	MidiConverter midiConverter = new MidiConverter();

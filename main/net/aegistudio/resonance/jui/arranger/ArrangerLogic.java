@@ -11,6 +11,7 @@ import net.aegistudio.resonance.channel.Clip;
 import net.aegistudio.resonance.channel.MidiChannel;
 import net.aegistudio.resonance.channel.Score;
 import net.aegistudio.resonance.channel.ScoreClip;
+import net.aegistudio.resonance.jui.Main;
 import net.aegistudio.resonance.jui.measure.MeasureRuler;
 import net.aegistudio.resonance.jui.measure.MeasuredPanel;
 import net.aegistudio.resonance.jui.resource.ResourceModel;
@@ -33,6 +34,11 @@ public class ArrangerLogic implements ArrangerModel
 		this.resourceModel = resourceModel;
 	}
 	
+	protected ArrangerView view;
+	public void setView(ArrangerView view) {
+		this.view = view;
+	}
+	
 	protected String getNextDefaultName(Class<? extends Channel> channelType) {
 		String prefix = channelType == MidiChannel.class? "Instrument " : "Channel ";
 		for(int i = 1; true; i ++)
@@ -48,30 +54,7 @@ public class ArrangerLogic implements ArrangerModel
 				.create(channelName, channelType);
 		if(channel == null) return;
 		
-		this.createChannelUI(channelName, channel);
-	}
-	
-	@SuppressWarnings("serial")
-	protected void createChannelUI(String channelName, Channel channel)
-	{
-		ChannelSection channelSection = null;
-		ClipStrip clips = null;
-		
-		if(channel instanceof MidiChannel)
-		{
-			channelSection = new InstrumentSection(this, channelName, (MidiChannel)channel);
-		
-			clips = new ClipStrip(this, ruler, channelSection){
-				
-				@Override
-				protected boolean accept(Object resource) {
-					if(resource == null) return false;
-					else return resource instanceof ScoreClip;
-				}
-			};
-		}
-		
-		channelPane.addRowContent(channelSection.parent = new ChannelStrip(channelSection, clips));
+		this.view.insertChannel(channelName, channel);
 	}
 	
 	@Override
@@ -83,11 +66,39 @@ public class ArrangerLogic implements ArrangerModel
 	public void removeChannel(ChannelSection channelSection) {
 		musicLayer.getChannelHolder().remove(channelSection.getChannelName());
 		channelPane.removeRowContent(channelSection.parent);
+		
+		Main.getHistory().abandon(a -> {
+			if(a instanceof ChannelRelatedAction)
+				return ((ChannelRelatedAction)a).getChannel() == channelSection.channel;
+			return false;
+		});
 	}
 
 	@Override
-	public void renameChannel(String oldName, String newName) {
-		musicLayer.getChannelHolder().rename(oldName, newName);
+	public void renameChannel(ChannelSection channelSection, String oldName, String newName) {
+		Main.getHistory().push(new ChannelRelatedAction() {
+			
+			@Override
+			public void redo() {
+				musicLayer.getChannelHolder().rename(oldName, newName);
+				channelSection.name.updateName(newName);
+			}
+
+			@Override
+			public void undo() {
+				musicLayer.getChannelHolder().rename(newName, oldName);
+				channelSection.name.updateName(oldName);
+			}
+
+			@Override
+			public Channel getChannel() {
+				return channelSection.channel;
+			}
+			
+			public String toString() {
+				return "Rename channel";
+			}
+		});
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

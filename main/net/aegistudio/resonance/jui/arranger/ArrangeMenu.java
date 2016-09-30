@@ -36,8 +36,7 @@ public class ArrangeMenu extends JPopupMenu{
 		newInstrumentChannel = new JMenuItem("Create Instrument");
 		newInstrumentChannel.setIcon(new ImageIcon("res/midi.png"));
 		this.add(newInstrumentChannel);
-		newInstrumentChannel.addActionListener(new ActionListener()
-		{
+		newInstrumentChannel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				arrangerModel.createChannel(MidiChannel.class);
@@ -56,14 +55,13 @@ public class ArrangeMenu extends JPopupMenu{
 		
 		eraseChannel = new JMenuItem("Erase Current Channel");
 		eraseChannel.setIcon(new ImageIcon("res/erase.png"));
-		eraseChannel.addActionListener(new ActionListener()
-		{
+		eraseChannel.addActionListener(new ActionListener()	{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(target != null)
-				{
-					int selection = JOptionPane.showConfirmDialog(target, String.format("Are you sure to erase the channel %s (can't be undo)?", target.getChannelName()), "Erasure confirm",
-							JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+				if(target != null) {
+					int selection = JOptionPane.showConfirmDialog(target, 
+							String.format("Are you sure to erase the channel %s (can't be undone)?", target.getChannelName()), 
+							"Erasure confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 					if(selection == JOptionPane.YES_OPTION)
 						arrangerModel.removeChannel(target);
 				}

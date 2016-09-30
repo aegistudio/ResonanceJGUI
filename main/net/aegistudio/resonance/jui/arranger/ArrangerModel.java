@@ -15,6 +15,7 @@ import net.aegistudio.scroll.ScrollPane;
 public interface ArrangerModel {
 	public void initElements(ScrollPane arragePane, RowPanel channelPane, MeasuredPanel clipPane, MeasureRuler ruler);
 	public void notifyChange();
+	public void setView(ArrangerView view);
 	
 	// Playback Related
 	public double getCurrentBeatPosition();
@@ -24,7 +25,7 @@ public interface ArrangerModel {
 	public Collection<? extends KeywordEntry<String, Channel>> allChannels();
 	public void createChannel(Class<? extends Channel> channelType);
 	public void removeChannel(ChannelSection channelSection);
-	public void renameChannel(String oldName, String newName);
+	public void renameChannel(ChannelSection channelSection, String oldName, String newName);
 	public void mute(String channelName, Channel channel);
 	public void solo(String channelName, Channel channel);
 	public KeywordEntry<String, Track>[] getTargerTracks();

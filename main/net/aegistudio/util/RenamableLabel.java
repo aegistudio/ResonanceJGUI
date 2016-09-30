@@ -23,18 +23,15 @@ public abstract class RenamableLabel extends JPanel
 	String name;
 	boolean isEditing;
 	
-	protected RenamableLabel(String initialName)
-	{
+	protected RenamableLabel(String initialName) {
 		super.setLayout(null);
 		super.setOpaque(true);
 		name = initialName;
 		this.nameLabel.setText(initialName);
 		this.renameField.setText(initialName);
 		
-		this.nameLabel.addMouseListener(doubleClickRename = new MouseAdapter()
-		{
-			public void mouseClicked(MouseEvent click)
-			{
+		this.nameLabel.addMouseListener(doubleClickRename = new MouseAdapter() {
+			public void mouseClicked(MouseEvent click) {
 				if(click.getClickCount() >= 2)
 					beginRename();
 			}
@@ -45,23 +42,17 @@ public abstract class RenamableLabel extends JPanel
 		renameField.setVisible(false);
 		isEditing = false;
 		renameField.setFont(nameLabel.getFont());
-		renameField.addKeyListener(new KeyAdapter()
-		{
+		renameField.addKeyListener(new KeyAdapter()	{
 			@Override
 			public void keyPressed(KeyEvent arg0) {
-				if(arg0.getKeyCode() == KeyEvent.VK_ENTER)
-				{
+				if(arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 					renameField.setVisible(false);
 					nameLabel.setVisible(true);
 					isEditing = false;
-					if(!renameField.getText().equals(nameLabel.getText())) try
-					{
+					if(!renameField.getText().equals(nameLabel.getText())) try {
 						submit(name, renameField.getText());
-						name = renameField.getText();
-						nameLabel.setText(name);
 					}
-					catch(Exception e)
-					{
+					catch(Exception e) {
 						JOptionPane.showConfirmDialog(RenamableLabel.this, e.getMessage(), "Rename failed!",
 								JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 						renameField.setText(nameLabel.getText());
@@ -111,6 +102,11 @@ public abstract class RenamableLabel extends JPanel
 	public String getName()
 	{
 		return name;
+	}
+	
+	public void updateName(String newName) {
+		name = newName;
+		nameLabel.setText(name);
 	}
 	
 	public void setForeground(Color fg)

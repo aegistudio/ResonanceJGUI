@@ -12,8 +12,7 @@ public class PianoRollLogic implements PianoRollModel
 {
 	public final KeywordEntry<String, Score> scoreEntry;
 	public final Score score;
-	public PianoRollLogic(KeywordEntry<String, Score> targetScore)
-	{
+	public PianoRollLogic(KeywordEntry<String, Score> targetScore) {
 		this.scoreEntry = targetScore;
 		this.score = this.scoreEntry.getValue();
 	}
@@ -66,18 +65,16 @@ public class PianoRollLogic implements PianoRollModel
 		return new NoteComponent(this, key, target, ruler);
 	}
 	
-	public String getScoreName()
-	{
+	public String getScoreName() {
 		return this.scoreEntry.getKeyword();
 	}
 	
-	public void batchMove(int delta){
+	public void batchMove(int delta) {
 		for(KeyboardStrip strip : keys)
 			for(Component component : strip.noteStrip.getComponents())
 				if(component instanceof NoteComponent)
 					strip.noteStrip.remove(component);
-		for(KeywordEntry<Double, Note> entry : score.getAllNotes().all())
-		{
+		for(KeywordEntry<Double, Note> entry : score.getAllNotes().all()) {
 				entry.getValue().pitch = (byte) ((entry.getValue().pitch + delta) % 128);
 				if(entry.getValue().pitch < 0) entry.getValue().pitch += 128;
 				keys[entry.getValue().pitch].noteStrip.add(new NoteComponent(this,

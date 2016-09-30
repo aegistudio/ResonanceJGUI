@@ -21,6 +21,8 @@ import net.aegistudio.resonance.io.OutputFacade;
 import net.aegistudio.resonance.jui.arranger.Arranger;
 import net.aegistudio.resonance.jui.arranger.ArrangerLogic;
 import net.aegistudio.resonance.jui.arranger.ArrangerModel;
+import net.aegistudio.resonance.jui.history.DefaultHistory;
+import net.aegistudio.resonance.jui.history.History;
 import net.aegistudio.resonance.jui.resource.ResourceLogic;
 import net.aegistudio.resonance.jui.resource.ResourceManager;
 import net.aegistudio.resonance.jui.resource.ResourceModel;
@@ -100,6 +102,11 @@ public class Main extends JFrame
 	
 	public void onMusicLayerTick() {
 		subwindows.forEach(w -> w.resonanceTick());
+	}
+	
+	protected History history = new DefaultHistory();
+	public static History getHistory() {
+		return main.history;
 	}
 	
 	public static MixerDevice[] devices;

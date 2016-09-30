@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import net.aegistudio.resonance.Resonance;
+import net.aegistudio.resonance.jui.history.Action;
 import net.aegistudio.resonance.jui.measure.MeasureRuler;
 import net.aegistudio.resonance.jui.setting.Theme;
 
@@ -316,50 +317,48 @@ public class Playback extends Subwindow {
 		
 		MouseAdapter bpmSetting = new MouseAdapter(){
 			int initialY;
-			double initialBPM;
-			protected void updateBPM(MouseEvent me)
-			{
-				resonance.musicFacade.
-					setBeatsPerMinute(Math.max(0.001f, (float) (initialBPM + (-1.0 * (me.getY() - initialY)) / 10)));
+			float initialBPM;
+			protected void updateBPM(MouseEvent me) {
+				resonance.musicFacade.setBeatsPerMinute(
+						Math.max(0.001f, (float) (initialBPM + (-1.0 * (me.getY() - initialY)) / 10)));
+			}
+			
+			public void mouseDragged(MouseEvent me) {
+				updateBPM(me);
 				repaint();
 			}
-			public void mouseDragged(MouseEvent me)
-			{
+			
+			public void mouseReleased(MouseEvent me) {
 				updateBPM(me);
-			}
-			public void mouseReleased(MouseEvent me)
-			{
-				updateBPM(me);
+				setBeatsPerMinute(initialBPM, resonance.musicFacade.getBeatsPerMinute());
 				bpmSetter.removeMouseMotionListener(this);
 			}
-			public void mousePressed(MouseEvent me)
-			{
+			
+			public void mousePressed(MouseEvent me) {
 				initialY = me.getY();
 				initialBPM = resonance.musicFacade.getBeatsPerMinute();
 				bpmSetter.addMouseMotionListener(this);
 			}
 			
-			public void mouseClicked(MouseEvent me)
-			{
+			public void mouseClicked(MouseEvent me) {
 				if(me.getClickCount() == 2 && me.getButton() == MouseEvent.BUTTON1) {
-					String input = String.format("%.3f", resonance.musicFacade.getBeatsPerMinute());
+					initialBPM = resonance.musicFacade.getBeatsPerMinute();
+					String input = String.format("%.3f", initialBPM);
 					while(true)	{
 						String errorMessage = "The beat(s) per minute you entered is not recognized!";
 						input = JOptionPane.showInputDialog(bpmSetter, "", "Customize Beat(s) Per Minute", JOptionPane.QUESTION_MESSAGE);
+						
 						if(input == null) return;
-						else try
-						{
+						else try {
 							float bpm = Float.parseFloat(input);
-							if(bpm <= 0)
-							{
+							if(bpm <= 0) {
 								errorMessage = "The beat(s) per minute you entered should be greater than zero!";
 								throw new RuntimeException();
 							}
-							resonance.musicFacade.setBeatsPerMinute(bpm);
+							setBeatsPerMinute(initialBPM, bpm);
 							break;
 						}
-						catch(RuntimeException e)
-						{
+						catch(RuntimeException e) {
 							JOptionPane.showConfirmDialog(bpmSetter, errorMessage
 									, "Not recognized beat(s) per minute!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 						}
@@ -374,5 +373,26 @@ public class Playback extends Subwindow {
 	public void resonanceTick() {
 		mode.run();
 		repaint();
+	}
+	
+	public void setBeatsPerMinute(float initialBpm, float lastBpm) {
+		Main.getHistory().push(new Action() {
+			
+			public String toString() {
+				return "Update BPM";
+			}
+
+			@Override
+			public void redo() {
+				resonance.musicFacade.setBeatsPerMinute(lastBpm);
+				repaint();
+			}
+
+			@Override
+			public void undo() {
+				resonance.musicFacade.setBeatsPerMinute(initialBpm);
+				repaint();
+			}
+		});
 	}
 }

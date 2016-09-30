@@ -13,6 +13,7 @@ import net.aegistudio.resonance.channel.MidiChannel;
 import net.aegistudio.resonance.channel.Score;
 import net.aegistudio.resonance.channel.ScoreClip;
 import net.aegistudio.resonance.jui.arranger.ArrangerModel;
+import net.aegistudio.resonance.jui.arranger.ArrangerView;
 import net.aegistudio.resonance.jui.arranger.ChannelSection;
 import net.aegistudio.resonance.jui.arranger.ChannelStrip;
 import net.aegistudio.resonance.jui.arranger.ClipComponent;
@@ -113,7 +114,7 @@ public class ArrangerModelDecoy implements ArrangerModel
 	}
 
 	@Override
-	public void renameChannel(String oldName, String newName) {
+	public void renameChannel(ChannelSection channelSection, String oldName, String newName) {
 		System.out.println("Calling renameChannel: " + oldName + ", " + newName);
 		channels.rename(oldName, newName);
 	}
@@ -237,6 +238,12 @@ public class ArrangerModelDecoy implements ArrangerModel
 
 	@Override
 	public void endDuplication() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setView(ArrangerView view) {
 		// TODO Auto-generated method stub
 		
 	}

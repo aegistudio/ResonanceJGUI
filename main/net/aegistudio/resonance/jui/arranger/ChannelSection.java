@@ -48,43 +48,36 @@ public abstract class ChannelSection extends JPanel
 	
 			@Override
 			protected void toggleOn() throws Exception {
-				// TODO Auto-generated method stub	
+				
 			}
 	
 			@Override
 			protected void toggleOff() throws Exception {
-				// TODO Auto-generated method stub
 				
 			}
 		};
 		super.add(mute);
 		
-		solo = new BistateToggle("res/solo_nonactive.png", "res/solo_active.png")
-		{
+		solo = new BistateToggle("res/solo_nonactive.png", "res/solo_active.png") {
 			@Override
 			protected void toggleOn() throws Exception {
 				// TODO Auto-generated method stub
-				
 			}
 
 			@Override
 			protected void toggleOff() throws Exception {
 				// TODO Auto-generated method stub
-				
 			}
 		};
 		super.add(solo);
 		
-		name = new RenamableLabel(channelName)
-		{
+		name = new RenamableLabel(channelName) {
 			@Override
 			protected void submit(String oldName, String newName) throws Exception {
-				try
-				{
-					model.renameChannel(oldName, newName);
+				try {
+					model.renameChannel(ChannelSection.this, oldName, newName);
 				}
-				catch(RuntimeException e)
-				{
+				catch(RuntimeException e) {
 					throw new Exception(e.getMessage());
 				}
 			}
@@ -92,8 +85,7 @@ public abstract class ChannelSection extends JPanel
 		super.add(name);
 	}
 	
-	protected void recalculate()
-	{
+	protected void recalculate() {
 		this.solo.setLocation(getSize().width - 22, 2);
 		this.solo.setSize(20, 20);
 		
@@ -107,8 +99,7 @@ public abstract class ChannelSection extends JPanel
 		this.name.setSize(this.getSize().width - 66, 24);
 	}
 	
-	public void paint(Graphics g)
-	{
+	public void paint(Graphics g) {
 		this.recalculate();
 		super.paint(g);
 
@@ -116,13 +107,11 @@ public abstract class ChannelSection extends JPanel
 		g.drawRect(-1, 0, getWidth() + 1, getHeight() - 1);
 	}
 	
-	public void beginRename()
-	{
+	public void beginRename() {
 		this.name.beginRename();
 	}
 	
-	public String getChannelName()
-	{
+	public String getChannelName() {
 		return this.name.getName();
 	}
 }

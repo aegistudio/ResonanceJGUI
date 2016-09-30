@@ -6,6 +6,9 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JPopupMenu;
 
+import net.aegistudio.resonance.channel.Channel;
+import net.aegistudio.resonance.channel.MidiChannel;
+import net.aegistudio.resonance.channel.ScoreClip;
 import net.aegistudio.resonance.jui.Subwindow;
 import net.aegistudio.resonance.jui.measure.MeasureRuler;
 import net.aegistudio.resonance.jui.measure.MeasuredPanel;
@@ -13,7 +16,7 @@ import net.aegistudio.scroll.RowPanel;
 import net.aegistudio.scroll.ScrollPane;
 
 @SuppressWarnings("serial")
-public class Arranger extends Subwindow
+public class Arranger extends Subwindow implements ArrangerView
 {
 	public final ScrollPane arrangePane; 
 	public final RowPanel channelPane;
@@ -28,6 +31,7 @@ public class Arranger extends Subwindow
 	public Arranger(ArrangerModel model)
 	{
 		this.model = model;
+		this.model.setView(this);
 		
 		this.channelPane = new RowPanel()
 		{
@@ -77,5 +81,26 @@ public class Arranger extends Subwindow
 	
 	public void resonanceTick() {
 		if(isVisible()) arrangePane.repaint();
+	}
+
+	@Override
+	public void insertChannel(String channelName, Channel channel) {
+		ChannelSection channelSection = null;
+		ClipStrip clips = null;
+		
+		if(channel instanceof MidiChannel) {
+			channelSection = new InstrumentSection(model, channelName, (MidiChannel)channel);
+		
+			clips = new ClipStrip(model, ruler, channelSection) {
+				@Override
+				protected boolean accept(Object resource) {
+					if(resource == null) return false;
+					else return resource instanceof ScoreClip;
+				}
+			};
+		}
+		
+		channelPane.addRowContent(channelSection.parent = new ChannelStrip(channelSection, clips));
+		repaint();
 	}
 }
