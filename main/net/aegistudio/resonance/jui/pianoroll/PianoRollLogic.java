@@ -1,5 +1,6 @@
 package net.aegistudio.resonance.jui.pianoroll;
 
+import java.awt.Component;
 import java.util.Collection;
 
 import net.aegistudio.resonance.KeywordArray.KeywordEntry;
@@ -68,5 +69,21 @@ public class PianoRollLogic implements PianoRollModel
 	public String getScoreName()
 	{
 		return this.scoreEntry.getKeyword();
+	}
+	
+	public void batchMove(int delta){
+		for(KeyboardStrip strip : keys)
+			for(Component component : strip.noteStrip.getComponents())
+				if(component instanceof NoteComponent)
+					strip.noteStrip.remove(component);
+		for(KeywordEntry<Double, Note> entry : score.getAllNotes().all())
+		{
+				entry.getValue().pitch = (byte) ((entry.getValue().pitch + delta) % 128);
+				if(entry.getValue().pitch < 0) entry.getValue().pitch += 128;
+				keys[entry.getValue().pitch].noteStrip.add(new NoteComponent(this,
+						keys[entry.getValue().pitch].noteStrip, entry, ruler));	
+		}
+		for(KeyboardStrip strip : keys)
+			strip.noteStrip.recalculateMeasure();
 	}
 }

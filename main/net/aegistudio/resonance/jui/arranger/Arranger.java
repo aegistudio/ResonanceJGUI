@@ -4,16 +4,16 @@ import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 
+import net.aegistudio.resonance.jui.Subwindow;
 import net.aegistudio.resonance.jui.measure.MeasureRuler;
 import net.aegistudio.resonance.jui.measure.MeasuredPanel;
 import net.aegistudio.scroll.RowPanel;
 import net.aegistudio.scroll.ScrollPane;
 
 @SuppressWarnings("serial")
-public class Arranger extends JFrame
+public class Arranger extends Subwindow
 {
 	public final ScrollPane arrangePane; 
 	public final RowPanel channelPane;
@@ -29,59 +29,53 @@ public class Arranger extends JFrame
 	{
 		this.model = model;
 		
-		this.arrangeMenu = new ArrangeMenu(model);
-		this.ruler = new TimingRuler(model);
-		
-		super.setTitle("Arranger");
-		super.setSize(800, 500);
-		super.setAlwaysOnTop(true);
-		
 		this.channelPane = new RowPanel()
 		{
 			{
 			//	sectionPanel.setOpaque(true);
 				sectionPanel.setBackground(Color.GRAY.brighter());
 				sectionPanel.addMouseListener(new MouseAdapter(){
-					public void mousePressed(MouseEvent me)
-					{
+					public void mousePressed(MouseEvent me) {
 						if(me.getButton() == MouseEvent.BUTTON3)
 							arrangeMenu.show(sectionPanel, me.getX(), me.getY());
 					}
 				});
 			}
-		};	
+		};
 		
-		this.clipPane = new MeasuredPanel(ruler, this.channelPane.getMainScroll());
+		this.arrangeMenu = new ArrangeMenu(model);
+		this.ruler = new TimingRuler(model);
 		this.arrangePane = new ScrollPane(ruler, channelPane);
 		this.arrangePane.viewPanel.setBackground(Color.WHITE);
 		this.arrangePane.rulerMeter.setBackground(Color.GRAY.brighter());
+		this.arrangePane.viewPanel.addMouseMotionListener(new MouseAdapter() {
+			public void mouseDragged(MouseEvent me){
+				repaint();
+			}
+		});
 		
 		this.add(arrangePane);
 		
-		this.model.initElements(arrangePane, channelPane, clipPane, ruler);
+		super.setTitle("Arranger");
+		super.setSize(800, 500);
+	//	super.setAlwaysOnTop(true);
 		
-		new Thread()
-		{
-			public void run()
-			{
-				while(true) try
-				{
-					repaint();
-					Thread.sleep(20L);
-				}
-				catch(Exception e)
-				{
-					
-				}
-			}
-		}
-		.start();
+		this.clipPane = new MeasuredPanel(ruler, this.channelPane.getMainScroll());
+		
+		this.model.initElements(arrangePane, channelPane, clipPane, ruler);
 	}
 	
 	public void repaint()
 	{
-		arrangePane.invalidate();
-		arrangePane.validate();
+		if(this.isValid()) 
+		{
+			arrangePane.invalidate();
+			arrangePane.validate();
+		}
 		super.repaint();
+	}
+	
+	public void resonanceTick() {
+		if(isVisible()) arrangePane.repaint();
 	}
 }

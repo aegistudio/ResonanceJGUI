@@ -1,12 +1,12 @@
 package net.aegistudio.resonance.jui.resource;
 
-import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
+import net.aegistudio.resonance.jui.Subwindow;
 import net.aegistudio.util.RecursivePanel;
 
 @SuppressWarnings("serial")
-public class ResourceManager extends JFrame
+public class ResourceManager extends Subwindow
 {
 	protected final RecursivePanel manager;
 	protected final JScrollPane scroll;
@@ -16,7 +16,7 @@ public class ResourceManager extends JFrame
 	public ResourceManager(ResourceModel resModel)
 	{
 		super();
-		super.setAlwaysOnTop(true);
+		//super.setAlwaysOnTop(true);
 		super.setTitle("Resource Manager");
 		super.setSize(300, 500);
 		

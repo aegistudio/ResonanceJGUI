@@ -13,7 +13,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -21,29 +20,36 @@ import javax.swing.JPopupMenu;
 
 import net.aegistudio.resonance.Resonance;
 import net.aegistudio.resonance.jui.measure.MeasureRuler;
+import net.aegistudio.resonance.jui.setting.Theme;
 
 @SuppressWarnings("serial")
-public class Playback extends JFrame{
+public class Playback extends Subwindow {
+	Resonance resonance;
 	JButton play, pause, stop;
 	JButton playMode;
 	
-	ImageIcon endless = new ImageIcon("res/endless.png");
-	ImageIcon stopAtTheEnd = new ImageIcon("res/stop_at_the_end.png");
-	ImageIcon loop = new ImageIcon("res/loop.png");
+	ImageIcon endless;
+	ImageIcon stopAtTheEnd;
+	ImageIcon loop;
 	
 	ImageIcon endlessMin;
 	ImageIcon stopAtTheEndMin;
 	ImageIcon loopMin;
 	
-	int mode = 0;	//0 = ENDLESS, 1 = STOP_AT_THE_END, 2 = LOOP
+	Runnable mode = () -> {};
 	
-	public Playback(Resonance resonance, MeasureRuler ruler)
+	public Playback(Theme theme, Resonance resonance, MeasureRuler ruler)
 	{
 		super();
 		super.setSize(755, 80);
+		super.setResizable(false);
 		super.setLayout(null);
-		super.setAlwaysOnTop(true);
 		super.setTitle("Playback");
+		
+		this.resonance = resonance;
+		endless = theme.makeIcon("endless.png");
+		stopAtTheEnd = theme.makeIcon("stop_at_the_end.png");
+		loop = theme.makeIcon("loop.png");
 		
 		endlessMin = new ImageIcon(endless.getImage().getScaledInstance(20, 20, Image.SCALE_REPLICATE));
 		stopAtTheEndMin = new ImageIcon(stopAtTheEnd.getImage().getScaledInstance(20, 20, Image.SCALE_REPLICATE));
@@ -68,8 +74,7 @@ public class Playback extends JFrame{
 				setIcon(new ImageIcon("res/play.png"));
 			}
 			{
-				super.addActionListener(new ActionListener()
-				{
+				super.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						resonance.play();
@@ -90,8 +95,7 @@ public class Playback extends JFrame{
 				setIcon(new ImageIcon("res/pause.png"));
 			}
 			{
-				super.addActionListener(new ActionListener()
-				{
+				super.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						resonance.pause();
@@ -112,8 +116,7 @@ public class Playback extends JFrame{
 				setIcon(new ImageIcon("res/stop.png"));
 			}
 			{
-				super.addActionListener(new ActionListener()
-				{
+				super.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						resonance.stop();
@@ -131,8 +134,7 @@ public class Playback extends JFrame{
 		{
 			JPopupMenu playModeMenu = new JPopupMenu();
 			JMenuItem endlessItem, stopAtTheEndItem, loopItem;
-			protected void enableAll()
-			{
+			protected void enableAll() {
 				endlessItem.setEnabled(true);
 				stopAtTheEndItem.setEnabled(true);
 				loopItem.setEnabled(true);
@@ -153,7 +155,7 @@ public class Playback extends JFrame{
 					public void actionPerformed(ActionEvent arg0) {
 						enableAll();
 						endlessItem.setEnabled(false);
-						mode = 0;
+						mode = () -> {};
 						playMode.setIcon(endless);
 						playMode.setToolTipText("Endless");
 					}
@@ -168,7 +170,14 @@ public class Playback extends JFrame{
 					public void actionPerformed(ActionEvent arg0) {
 						enableAll();
 						stopAtTheEndItem.setEnabled(false);
-						mode = 1;
+						mode = () -> {
+							if(resonance.musicFacade.getBeatPosition() >= resonance.musicFacade.getLength())
+							{
+								resonance.stop();
+								pause.setVisible(false);
+								play.setVisible(true);
+							}
+						};
 						playMode.setIcon(stopAtTheEnd);
 						playMode.setToolTipText("Stop At The End");
 					}
@@ -182,7 +191,10 @@ public class Playback extends JFrame{
 					public void actionPerformed(ActionEvent arg0) {
 						enableAll();
 						loopItem.setEnabled(false);
-						mode = 2;
+						mode = () -> {
+							if(resonance.musicFacade.getBeatPosition() > resonance.musicFacade.getLength())
+								resonance.musicFacade.setBeatPosition(0);
+						};;
 						playMode.setIcon(loop);
 						playMode.setToolTipText("Loop");
 					}
@@ -209,8 +221,7 @@ public class Playback extends JFrame{
 				setForeground(Color.WHITE);
 				setHorizontalAlignment(CENTER);
 			}
-			public void paint(Graphics g)
-			{
+			public void paint(Graphics g) {
 				g.setColor(Color.BLACK);
 				g.fillRect(0, 0, getWidth(), getHeight());
 				super.paint(g);
@@ -226,10 +237,8 @@ public class Playback extends JFrame{
 		position.setLocation(140, 10);
 		super.add(position);
 		
-		Component progressBar = new JLabel()
-		{
-			public void paint(Graphics g)
-			{
+		Component progressBar = new JLabel() {
+			public void paint(Graphics g) {
 				g.setColor(Color.BLACK);
 				g.drawLine(0, getHeight() / 2, getWidth(), getHeight() / 2);
 				g.drawLine(0, getHeight() / 2 + 1, getWidth(), getHeight() / 2 + 1);
@@ -289,10 +298,8 @@ public class Playback extends JFrame{
 		bpmLabel.setForeground(Color.WHITE);
 		super.add(bpmLabel);
 		
-		JLabel bpmSetter = new JLabel()
-		{
-			public void paint(Graphics g)
-			{
+		JLabel bpmSetter = new JLabel() {
+			public void paint(Graphics g) {
 				g.setColor(Color.BLACK);
 				g.fillRect(0, 0, getWidth(), getHeight());
 				
@@ -314,6 +321,7 @@ public class Playback extends JFrame{
 			{
 				resonance.musicFacade.
 					setBeatsPerMinute(Math.max(0.001f, (float) (initialBPM + (-1.0 * (me.getY() - initialY)) / 10)));
+				repaint();
 			}
 			public void mouseDragged(MouseEvent me)
 			{
@@ -333,11 +341,9 @@ public class Playback extends JFrame{
 			
 			public void mouseClicked(MouseEvent me)
 			{
-				if(me.getClickCount() == 2 && me.getButton() == MouseEvent.BUTTON1)
-				{
+				if(me.getClickCount() == 2 && me.getButton() == MouseEvent.BUTTON1) {
 					String input = String.format("%.3f", resonance.musicFacade.getBeatsPerMinute());
-					while(true)
-					{
+					while(true)	{
 						String errorMessage = "The beat(s) per minute you entered is not recognized!";
 						input = JOptionPane.showInputDialog(bpmSetter, "", "Customize Beat(s) Per Minute", JOptionPane.QUESTION_MESSAGE);
 						if(input == null) return;
@@ -363,37 +369,10 @@ public class Playback extends JFrame{
 			}
 		};
 		bpmSetter.addMouseListener(bpmSetting);
-		
-		new Thread()
-		{
-			public void run()
-			{
-				while(true) try
-				{
-					if(mode == 1)
-					{
-						if(resonance.musicFacade.getBeatPosition() >= resonance.musicFacade.getLength())
-						{
-							resonance.stop();
-							pause.setVisible(false);
-							play.setVisible(true);
-						}
-					}
-					else if(mode == 2)
-					{
-						if(resonance.musicFacade.getBeatPosition() > resonance.musicFacade.getLength())
-							resonance.musicFacade.setBeatPosition(0);
-					}
-					repaint();
-					Thread.sleep(100L);
-				}
-				catch(Exception e)
-				{
-					
-				}
-			}
-		}
-		.start();
+	}
 	
+	public void resonanceTick() {
+		mode.run();
+		repaint();
 	}
 }

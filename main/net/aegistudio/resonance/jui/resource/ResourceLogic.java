@@ -13,7 +13,7 @@ import javax.sound.midi.Track;
 import net.aegistudio.resonance.KeywordArray.KeywordEntry;
 import net.aegistudio.resonance.NamedHolder;
 import net.aegistudio.resonance.channel.Score;
-import net.aegistudio.resonance.io.midi.MidiConverter;
+import net.aegistudio.resonance.io.MidiConverter;
 import net.aegistudio.resonance.jui.pianoroll.PianoRoll;
 import net.aegistudio.resonance.jui.pianoroll.PianoRollLogic;
 

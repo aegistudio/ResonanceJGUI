@@ -1,6 +1,8 @@
 package net.aegistudio.resonance.jui.pianoroll;
 
 import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Collection;
@@ -58,6 +60,20 @@ public class PianoRoll extends JFrame
 			int pitch = note.getValue().pitch;
 			keys[pitch].getMainScroll().add(new NoteComponent(model, keys[pitch].getMainScroll(), note, ruler));
 		}
+		
+		this.addKeyListener(new KeyAdapter()
+		{
+			public void keyPressed(KeyEvent ke)
+			{
+				if(ke.isControlDown())
+				{
+					if(ke.getKeyCode() == KeyEvent.VK_UP)
+						model.batchMove(1);
+					else if(ke.getKeyCode() == KeyEvent.VK_DOWN)
+						model.batchMove(-1);
+				}
+			}
+		});
 		
 		new Thread()
 		{

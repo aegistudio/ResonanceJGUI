@@ -72,4 +72,10 @@ public class PianoRollModelDecoy implements PianoRollModel
 		return "Test";
 	}
 
+	@Override
+	public void batchMove(int delta) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

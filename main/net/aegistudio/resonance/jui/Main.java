@@ -2,13 +2,17 @@ package net.aegistudio.resonance.jui;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
-import javax.swing.UIManager;
+import javax.swing.JOptionPane;
 
-import net.aegistudio.resonance.Encoding;
 import net.aegistudio.resonance.Environment;
 import net.aegistudio.resonance.Resonance;
 import net.aegistudio.resonance.device.MixerDevice;
@@ -20,34 +24,41 @@ import net.aegistudio.resonance.jui.arranger.ArrangerModel;
 import net.aegistudio.resonance.jui.resource.ResourceLogic;
 import net.aegistudio.resonance.jui.resource.ResourceManager;
 import net.aegistudio.resonance.jui.resource.ResourceModel;
+import net.aegistudio.resonance.jui.setting.DefaultTheme;
+import net.aegistudio.resonance.jui.setting.Setting;
+import net.aegistudio.resonance.jui.setting.Theme;
 import net.aegistudio.resonance.music.MusicController;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame
 {
+	public final Theme theme;
+	
 	public final Resonance resonance;
 
 	public final JDesktopPane desktopPane;
 	
-	//public final JButton showArrangerButton;
 	public final Arranger arranger;
 	
 	public final ResourceManager resourceManager;
 	
-	//public final JButton showMixerButton;
+	public final Playback playback;
 	
-	//public final JButton showResourceManagerButton;
+	public final Setting setting;
 	
 	public static final Color mimicBackground = new Color(0, 95, 120);
 	
-	public Main(Resonance resonance, ArrangerModel arrangerModel, ResourceModel resourceModel) throws Exception
-	{
+	public ArrayList<Subwindow> subwindows = new ArrayList<Subwindow>();
+	
+	public Main(Theme theme, Resonance resonance, ArrangerModel arrangerModel, ResourceModel resourceModel) throws Exception {
 		super();
+		this.theme = theme;
+		theme.preset();
+		
 		this.resonance = resonance;
 		super.setTitle("Resonance");
 		super.setSize(1280, 768);
 		super.setDefaultCloseOperation(EXIT_ON_CLOSE);	// Should add confirm message if closing!
-		
 		
 		desktopPane = new JDesktopPane();
 		super.add(desktopPane);
@@ -56,53 +67,95 @@ public class Main extends JFrame
 		this.setLocation(mainLocation);
 		
 		this.arranger = new Arranger(arrangerModel);
-		this.arranger.setLocation(mainLocation.x + 5, mainLocation.y + 50);
+		//this.arranger.setLocation(mainLocation.x + 5, mainLocation.y + 50);
+		this.arranger.setLocation(5, 50);
 		this.arranger.setVisible(true);
+		desktopPane.add(arranger);
+		subwindows.add(arranger);
 		
 		this.resourceManager = new ResourceManager(resourceModel);
-		this.resourceManager.setLocation(mainLocation.x - 5 + getWidth() - this.resourceManager.getWidth(), mainLocation.y + 50);
+		//this.resourceManager.setLocation(mainLocation.x - 5 + getWidth() - this.resourceManager.getWidth(), mainLocation.y + 50);
+		this.resourceManager.setLocation(getWidth() - this.resourceManager.getWidth() - 5, 50);
 		this.resourceManager.setVisible(true);
+		desktopPane.add(resourceManager);
+		subwindows.add(resourceManager);
 		
-		Playback playback = new Playback(resonance, arranger.ruler);
-		playback.setLocation(mainLocation.x + 5, mainLocation.y + this.arranger.getHeight() + 105);
-		playback.setVisible(true);
+		this.playback = new Playback(theme, resonance, arranger.ruler);
+		//this.playback.setLocation(mainLocation.x + 5, mainLocation.y + this.arranger.getHeight() + 105);
+		this.playback.setLocation(5, this.arranger.getHeight() + 105);
+		this.playback.setVisible(true);
+		desktopPane.add(playback);
+		subwindows.add(playback);
 		
-		/*
-		this.showArrangerButton = new SubwindowShowButton(arranger);
-		this.showArrangerButton.setBounds(10, this.desktopPane.getHeight() - 110, 80,  80);
-		this.showArrangerButton.setToolTipText("Arranger");
-		this.showArrangerButton.setIcon(new ImageIcon(ImageIO.read(new File("res/arranger.png")).getScaledInstance(80, 80, Image.SCALE_SMOOTH)));
-		this.desktopPane.add(showArrangerButton);
+		this.setting = new Setting(resonance);
+		this.setting.setVisible(false);
+		this.setting.setLocation(5, 50);
+		desktopPane.add(setting);
+		subwindows.add(setting);
 		
-		this.showMixerButton = new SubwindowShowButton(null);
-		this.showMixerButton.setBounds(100, this.desktopPane.getHeight() - 110, 80, 80);
-		this.showMixerButton.setToolTipText("Mixer");
-		this.showMixerButton.setIcon(new ImageIcon(ImageIO.read(new File("res/mixer.png")).getScaledInstance(80, 80, Image.SCALE_SMOOTH)));
-		this.desktopPane.add(showMixerButton);
-		
-		this.showResourceManagerButton = new SubwindowShowButton(resourceManager);
-		this.showResourceManagerButton.setBounds(190, this.desktopPane.getHeight() - 110, 80, 80);
-		this.showResourceManagerButton.setToolTipText("Resource Manager");
-		this.desktopPane.add(showResourceManagerButton);
-		*/
+		this.setJMenuBar(new MenuBar(this));
 	}
 	
-	public static void main(String[] arguments) throws Exception
-	{
-		UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-		//UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+	static Main main;
+	
+	public void onMusicLayerTick() {
+		subwindows.forEach(w -> w.resonanceTick());
+	}
+	
+	public static MixerDevice[] devices;
+	public static Map<MixerDevice, AudioFormat[]> formats = new HashMap<>();
+	public static void scanSupportedFormat() {
+		// Retrieve devices.
+		ArrayList<MixerDevice> devices = new ArrayList<>();
+		for(Mixer.Info info : AudioSystem.getMixerInfo())
+			devices.add(new MixerDevice(info));
+		Main.devices = devices.toArray(new MixerDevice[0]);
 		
+		// Retrieve format for first device.
+		formats.put(Main.devices[0], Main.devices[0].getAvailableFormats());
+		
+		// Retrieve formats.
+		devices.forEach(device -> {
+			if(device == Main.devices[0]) return;
+			new Thread(() -> formats.put(device, device.getAvailableFormats())).start();
+		});
+	}
+	
+	public static void main(String[] arguments) throws Exception {
 		OutputFacade outputLayer = new OutputController();
-		MusicController musicController = new MusicController();
-		Resonance resonance = new Resonance(outputLayer, musicController.dataflowController, musicController);
+		MusicController musicController = new MusicController() {
+			public void tick() {
+				super.tick();
+				new Thread(() -> main.onMusicLayerTick()).start();
+			}
+		};
+		
+		Resonance resonance = new Resonance(outputLayer, musicController.dataflowController, musicController) {
+			public void exceptionWhileRendering(RuntimeException re) {
+				this.exceptionBus(re);
+			}
+			
+			public void exceptionWhileTaping(RuntimeException re) {
+				this.exceptionBus(re);
+			}
+			
+			public void exceptionBus(RuntimeException re) {
+				JOptionPane.showConfirmDialog(main.playback, 
+						String.format("Error while playing, caused by %s\nPlease change your configuration and try again.", 
+								re.getMessage() == null? re.getClass() : re.getMessage()), "Error while playing",
+						JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+			}
+		};
 		
 		ResourceModel resourceModel = new ResourceLogic(musicController.getScoreHolder());
 		ArrangerModel arrangerModel = new ArrangerLogic(musicController, resourceModel);
 		
-		Main main = new Main(resonance, arrangerModel, resourceModel);
-		main.setVisible(true);
+		scanSupportedFormat();
 		
-		resonance.setEnvironment(new Environment(44100.0f, 2, new Encoding(Encoding.BITDEPTH_BIT32 | Encoding.WORDTYPE_INT | Encoding.ENDIAN_BIG),
-				128, 16), new MixerDevice(AudioSystem.getMixerInfo()[0]));
+		MixerDevice mixerDevice = Main.devices[0];
+		resonance.setEnvironment(new Environment(formats.get(Main.devices[0])[0], 128, 16), mixerDevice);
+		
+		main = new Main(new DefaultTheme(), resonance, arrangerModel, resourceModel);
+		main.setVisible(true);
 	}
 }
