@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+     
+	<groupId>net.aegistudio.resonance-jui</groupId>
+	<artifactId>resonance-java-ui</artifactId>
+	<version>1.0</version>
+
+	<repositories>
+		<repository>
+			<id>nexus.aegistudio.net</id>
+			<url>http://nexus.aegistudio.net/repository/resonance/</url>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>nexus.aegistudio.net</id>
+			<url>http://nexus.aegistudio.net/repository/resonance/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus.aegistudio.net</id>
+			<url>http://nexus.aegistudio.net/repository/resonance/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<name>Resonance Java Gui</name>
+	<url>http://github.com/aegistudio/ResonanceJGUI</url>
+	
+	<build><plugins><plugin>
+		<artifactId>maven-compiler-plugin</artifactId>
+		<configuration>
+			<source>1.8</source><target>1.8</target>
+		</configuration>
+	</plugin></plugins></build>
+	<scm>
+		<url>git://github.com/aegistudio/ResonanceJGUI</url>
+	</scm>
+	
+	<description>Utilizing core module, the resonance java gui creates DAW (Digital Audio Workstation) for cross platform users.</description>
+	<dependencies>
+		<dependency>
+			<groupId>net.aegistudio.resonance</groupId>
+			<artifactId>resonance-core-dep</artifactId>
+			<version>1.0</version>
+			<type>pom</type>
+		</dependency>
+	</dependencies>
+</project>
