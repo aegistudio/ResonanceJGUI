@@ -5,13 +5,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import net.aegistudio.resonance.jui.Main;
 import net.aegistudio.resonance.jui.Overwrite;
 
 @SuppressWarnings("serial")
@@ -44,7 +44,7 @@ public class ScorePopupMenu extends JPopupMenu
 		
 		super.addSeparator();
 		
-		createScore.setIcon(new ImageIcon("res/midi.png"));
+		Main.getMain().theme.configure(createScore, "resource.score");
 		createScore.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -52,8 +52,8 @@ public class ScorePopupMenu extends JPopupMenu
 			}
 		});
 		super.add(createScore);
-				
-		eraseScore.setIcon(new ImageIcon("res/erase.png"));
+
+		Main.getMain().theme.configure(eraseScore, "common.erase");
 		eraseScore.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {

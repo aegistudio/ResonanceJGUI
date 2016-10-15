@@ -60,7 +60,7 @@ public class ArrangerLogic implements ArrangerModel
 		musicLayer.getChannelHolder().remove(channelSection.getChannelName());
 		channelPane.removeRowContent(channelSection.parent);
 		
-		Main.getHistory().abandon(a -> {
+		Main.getMain().getHistory().abandon(a -> {
 			if(a instanceof ChannelRelatedAction)
 				return ((ChannelRelatedAction)a).getChannel() == channelSection.channel;
 			return false;
@@ -69,7 +69,7 @@ public class ArrangerLogic implements ArrangerModel
 
 	@Override
 	public void renameChannel(ChannelSection channelSection, String oldName, String newName) {
-		Main.getHistory().push(new ChannelRelatedAction() {
+		Main.getMain().getHistory().push(new ChannelRelatedAction() {
 			
 			@Override
 			public void redo() {

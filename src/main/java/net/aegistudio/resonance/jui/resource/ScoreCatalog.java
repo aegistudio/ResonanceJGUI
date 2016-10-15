@@ -2,14 +2,12 @@ package net.aegistudio.resonance.jui.resource;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import net.aegistudio.resonance.jui.Main;
 import net.aegistudio.resonance.music.KeywordArray.KeywordEntry;
 import net.aegistudio.resonance.music.channel.Score;
 import net.aegistudio.util.FoldableComponent;
-
 
 @SuppressWarnings("serial")
 public class ScoreCatalog extends FoldableComponent {
@@ -17,7 +15,7 @@ public class ScoreCatalog extends FoldableComponent {
 	
 	public ScoreCatalog(ResourceModel resModel) {
 		super(new JLabel("Score") {{
-			setIcon(new ImageIcon("res/midi.png"));
+			Main.getMain().theme.configure(this, "resource.score");
 		}});
 		
 		this.scoreMenu = new ScorePopupMenu(resModel, null);

@@ -13,7 +13,7 @@ import javax.sound.midi.Track;
 import net.aegistudio.resonance.music.*;
 import net.aegistudio.resonance.music.channel.*;
 import net.aegistudio.resonance.music.KeywordArray.KeywordEntry;
-import net.aegistudio.resonance.format.MidiConverter;
+import net.aegistudio.resonance.music.channel.MidiConverter;
 import net.aegistudio.resonance.jui.Main;
 import net.aegistudio.resonance.jui.pianoroll.PianoRoll;
 import net.aegistudio.resonance.jui.pianoroll.PianoRollLogic;
@@ -34,7 +34,7 @@ public class ResourceLogic implements ResourceModel{
 
 	private void removeResource(Object resource) {
 		if(resource == currentResource) useResource(null, null);
-		Main.getHistory().abandon(a -> {
+		Main.getMain().getHistory().abandon(a -> {
 			if(a instanceof ResourceRelatedAction)
 				return ((ResourceRelatedAction)a).getResource() == resource;
 			return false;
@@ -78,7 +78,7 @@ public class ResourceLogic implements ResourceModel{
 	{
 		try {
 			
-			Main.getHistory().push(new ResourceRelatedAction() {
+			Main.getMain().getHistory().push(new ResourceRelatedAction() {
 				
 				@Override
 				public void redo() {

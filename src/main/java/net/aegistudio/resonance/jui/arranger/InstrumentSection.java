@@ -4,19 +4,18 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
+import net.aegistudio.resonance.jui.Main;
 import net.aegistudio.resonance.music.KeywordArray.KeywordEntry;
 import net.aegistudio.resonance.music.channel.MidiChannel;
 import net.aegistudio.resonance.music.mixer.Track;
 import net.aegistudio.resonance.plugin.Plugin;
 
 @SuppressWarnings("serial")
-public class InstrumentSection extends ChannelSection
-{
+public class InstrumentSection extends ChannelSection {
 	JLabel outputIcon;
 	JLabel pluginIcon;
 	
@@ -28,14 +27,17 @@ public class InstrumentSection extends ChannelSection
 	
 	public InstrumentSection(ArrangerModel model, String channelName, MidiChannel channel) {
 		super(model, channelName, channel);
-		super.channelDenotation.setIcon(new ImageIcon("res/midi.png"));
+		Main.getMain().theme.configure(
+				super.channelDenotation, "channel.midi");
 		
 		outputIcon = new JLabel();
-		outputIcon.setIcon(new ImageIcon("res/output.png"));
+		Main.getMain().theme.configure(
+				outputIcon, "channel.output");
 		super.add(outputIcon);
 		
 		pluginIcon = new JLabel();
-		pluginIcon.setIcon(new ImageIcon("res/plugin.png"));
+		Main.getMain().theme.configure(
+				pluginIcon, "channel.plugin");
 		super.add(pluginIcon);
 		
 		super.add(outputComboBox);
@@ -44,8 +46,7 @@ public class InstrumentSection extends ChannelSection
 		Plugin plugin = channel.getPlugin();
 		pluginClass = plugin == null? null : plugin.getClass();
 		
-		pluginComboBox.addItemListener(new ItemListener()
-		{
+		pluginComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent arg0) {
 				@SuppressWarnings("unchecked")
@@ -53,13 +54,11 @@ public class InstrumentSection extends ChannelSection
 						(KeywordEntry<String, Class<? extends Plugin>>) arg0.getItem();
 				if(target.getValue() == pluginClass) return;
 
-				try
-				{
+				try {
 					model.usePlugin(InstrumentSection.this, target.getValue());
 					pluginClass = target.getValue();
 				}
-				catch(Exception e)
-				{
+				catch(Exception e) {
 					JOptionPane.showConfirmDialog(InstrumentSection.this, "Plugin setting may fails. Due to\n" + e,
 							"Plugin setting error!", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
 				}
@@ -72,8 +71,7 @@ public class InstrumentSection extends ChannelSection
 	KeywordEntry<String, Track>[] currentTracks;
 	KeywordEntry<String, Class<? extends Plugin>>[] currentPlugins;
 	
-	protected void recalculate()
-	{
+	protected void recalculate() {
 		outputIcon.setLocation(5, 24);
 		outputIcon.setSize(20, 20);
 		

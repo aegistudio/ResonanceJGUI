@@ -43,7 +43,7 @@ public abstract class ChannelSection extends JPanel
 		
 		this.channel = channel;
 		this.model = model;
-		mute = new BistateToggle("res/mute_nonactive.png", "res/mute_active.png")
+		mute = new BistateToggle("channel.mute.off", "channel.mute.on")
 		{
 	
 			@Override
@@ -58,7 +58,7 @@ public abstract class ChannelSection extends JPanel
 		};
 		super.add(mute);
 		
-		solo = new BistateToggle("res/solo_nonactive.png", "res/solo_active.png") {
+		solo = new BistateToggle("channel.solo.off", "channel.solo.on") {
 			@Override
 			protected void toggleOn() throws Exception {
 				// TODO Auto-generated method stub

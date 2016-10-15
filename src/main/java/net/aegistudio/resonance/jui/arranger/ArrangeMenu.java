@@ -5,12 +5,12 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
+import net.aegistudio.resonance.jui.Main;
 import net.aegistudio.resonance.music.channel.MidiChannel;
 
 @SuppressWarnings("serial")
@@ -25,8 +25,7 @@ public class ArrangeMenu extends JPopupMenu{
 	protected JMenuItem eraseChannel;
 	protected JMenuItem renameChannel; 
 	
-	public ArrangeMenu(final ArrangerModel arrangerModel)
-	{
+	public ArrangeMenu(final ArrangerModel arrangerModel) {
 		arrangeTitle = new JMenuItem("Arrange");
 		arrangeTitle.setForeground(Color.ORANGE.darker());
 		arrangeTitle.setEnabled(false);
@@ -34,7 +33,7 @@ public class ArrangeMenu extends JPopupMenu{
 		this.add(new JSeparator());
 		
 		newInstrumentChannel = new JMenuItem("Create Instrument");
-		newInstrumentChannel.setIcon(new ImageIcon("res/midi.png"));
+		Main.getMain().theme.configure(newInstrumentChannel, "channel.midi");
 		this.add(newInstrumentChannel);
 		newInstrumentChannel.addActionListener(new ActionListener() {
 			@Override
@@ -44,17 +43,17 @@ public class ArrangeMenu extends JPopupMenu{
 		});
 		
 		newAudioChannel = new JMenuItem("Create Audio Record");
-		newAudioChannel.setIcon(new ImageIcon("res/audio.png"));
+		Main.getMain().theme.configure(newAudioChannel, "channel.audio");
 		this.add(newAudioChannel);
 		
 		newAutomation = new JMenuItem("Create Automation");
-		newAutomation.setIcon(new ImageIcon("res/automation.png"));
+		Main.getMain().theme.configure(newAutomation, "channel.automation");
 		this.add(newAutomation);
 		
 		this.add(new JSeparator());
 		
 		eraseChannel = new JMenuItem("Erase Current Channel");
-		eraseChannel.setIcon(new ImageIcon("res/erase.png"));
+		Main.getMain().theme.configure(eraseChannel, "common.erase");
 		eraseChannel.addActionListener(new ActionListener()	{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {

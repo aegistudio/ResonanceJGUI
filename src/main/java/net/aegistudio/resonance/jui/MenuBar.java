@@ -40,12 +40,12 @@ public class MenuBar extends JMenuBar
 		this.edit.add(redo);
 		
 		this.edit.addMenuListener(new MenuAdapter(() -> {
-			Action toUndo = Main.getHistory().toUndo();
+			Action toUndo = Main.getMain().getHistory().toUndo();
 			undo.setEnabled(toUndo != null);
 			if(toUndo != null) undo.setText("Undo " + toUndo.toString());
 			else undo.setText("Undo");
 			
-			Action toRedo = Main.getHistory().toRedo();
+			Action toRedo = Main.getMain().getHistory().toRedo();
 			redo.setEnabled(toRedo != null);
 			if(toRedo != null) redo.setText("Redo " + toRedo.toString());
 			else redo.setText("Redo");

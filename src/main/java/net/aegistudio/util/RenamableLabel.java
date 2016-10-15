@@ -7,14 +7,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
-public abstract class RenamableLabel extends JPanel
-{
+public abstract class RenamableLabel extends JPanel {
 	protected JLabel nameLabel = new JLabel();
 	protected JTextField renameField = new JTextField();
 	
@@ -63,8 +63,7 @@ public abstract class RenamableLabel extends JPanel
 		super.add(this.renameField, 0);
 	}
 	
-	public void beginRename()
-	{
+	public void beginRename() {
 		isEditing = true;
 		renameField.setVisible(true);
 	}
@@ -75,32 +74,27 @@ public abstract class RenamableLabel extends JPanel
 	protected int renameFieldX = 0;
 	protected int renameFieldY = 0;
 	
-	public void paint(Graphics g)
-	{
+	public void paint(Graphics g) {
 		this.nameLabel.setLocation(nameLabelX, nameLabelY);
 		this.nameLabel.setSize(getSize());
-		if(this.nameLabel.getIcon() == null)
-		{
+		if(this.nameLabel.getIcon() == null) {
 			this.renameField.setLocation(renameFieldX, renameFieldY);
 			this.renameField.setSize(getSize());
 		}
-		else
-		{
+		else {
 			this.renameField.setLocation(renameFieldX + getHeight(), renameFieldY);
 			this.renameField.setSize(getWidth() - getHeight(), getHeight());
 		}
 		super.paint(g);
 	}
 	
-	public boolean isEditing()
-	{
+	public boolean isEditing() {
 		return this.isEditing;
 	}
 	
 	protected abstract void submit(String oldName, String newName) throws Exception;
 	
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
 	
@@ -109,9 +103,12 @@ public abstract class RenamableLabel extends JPanel
 		nameLabel.setText(name);
 	}
 	
-	public void setForeground(Color fg)
-	{
+	public void setForeground(Color fg) {
 		if(this.nameLabel != null)
 			this.nameLabel.setForeground(fg);
+	}
+	
+	public void setIcon(Icon icon) {
+		nameLabel.setIcon(icon);
 	}
 }

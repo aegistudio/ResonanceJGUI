@@ -14,7 +14,7 @@ public class ScoreEntry extends RenamableEntry{
 	public ResourceModel resModel;
 	
 	public ScoreEntry(ResourceModel resModel, KeywordEntry<String, Score> score) {
-		super("res/midi.png", score.getKeyword());
+		super("resource.score", score.getKeyword());
 		this.score = score;
 		this.resModel = resModel;
 		this.scoreMenu = new ScorePopupMenu(resModel, this);

@@ -5,8 +5,7 @@ import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.ImageIcon;
-
+import net.aegistudio.resonance.jui.Main;
 import net.aegistudio.util.FoldableComponent;
 import net.aegistudio.util.RenamableLabel;
 
@@ -18,7 +17,7 @@ public abstract class RenamableEntry extends FoldableComponent {
 		
 		super.foldingObject = new RenamableLabel(initialName) {
 			{
-				nameLabel.setIcon(new ImageIcon("res/midi.png"));
+				Main.getMain().theme.configure(this, icon);
 				nameLabel.removeMouseListener(doubleClickRename);
 				setSize(200, 22);
 			}

@@ -53,6 +53,7 @@ public class Main extends JFrame {
 	
 	public Main(Theme theme, Resonance resonance, ArrangerModel arrangerModel, ResourceModel resourceModel) throws Exception {
 		super();
+		Main.main = this;
 		this.theme = theme;
 		theme.preset();
 		
@@ -81,7 +82,7 @@ public class Main extends JFrame {
 		desktopPane.add(resourceManager);
 		subwindows.add(resourceManager);
 		
-		this.playback = new Playback(theme, resonance, arranger.ruler);
+		this.playback = new Playback(resonance, arranger.ruler);
 		//this.playback.setLocation(mainLocation.x + 5, mainLocation.y + this.arranger.getHeight() + 105);
 		this.playback.setLocation(5, this.arranger.getHeight() + 105);
 		this.playback.setVisible(true);
@@ -99,13 +100,17 @@ public class Main extends JFrame {
 	
 	static Main main;
 	
+	public static Main getMain() {
+		return main;
+	}
+	
 	public void onMusicLayerTick() {
 		subwindows.forEach(w -> w.resonanceTick());
 	}
 	
 	protected History history = new DefaultHistory();
-	public static History getHistory() {
-		return main.history;
+	public History getHistory() {
+		return history;
 	}
 	
 	public static MixerDevice[] devices;

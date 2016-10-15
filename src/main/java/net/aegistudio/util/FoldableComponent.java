@@ -11,6 +11,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import net.aegistudio.resonance.jui.Main;
+
 @SuppressWarnings("serial")
 public class FoldableComponent extends Container
 {
@@ -22,11 +24,16 @@ public class FoldableComponent extends Container
 	
 	protected FoldableComponent parent;
 
-	public static final ImageIcon pack = new ImageIcon("res/pack.png");
-	public static final ImageIcon unpack = new ImageIcon("res/unpack.png");
+	public static ImageIcon pack, unpack;
 	
-	public FoldableComponent(Component foldingObject)
-	{
+	private static void ensurePackResource() {
+		if(pack == null) pack = Main.getMain().theme.rawIcon("common.pack");
+		if(unpack == null) unpack = Main.getMain().theme.rawIcon("common.unpack");
+	}
+	
+	public FoldableComponent(Component foldingObject) {
+		ensurePackResource();
+		
 		super.setLayout(null);
 		if(foldingObject != null)
 			super.add(this.foldingObject = foldingObject);
@@ -46,21 +53,18 @@ public class FoldableComponent extends Container
 	}
 	
 	boolean dirty = true;
-	public void setFold(boolean hasFold)
-	{
+	public void setFold(boolean hasFold) {
 		this.hasFold = hasFold;
 		if(foldingObject != null)
 			recalculateSize();
 		repaint();
 	}
 	
-	public boolean hasFold()
-	{
+	public boolean hasFold() {
 		return this.hasFold;
 	}
 	
-	public Component addOffspring(Component c)
-	{
+	public Component addOffspring(Component c) {
 		Component r = offspringPanel.add(c);
 		if(c instanceof FoldableComponent)
 			((FoldableComponent) c).parent = this;
@@ -68,8 +72,7 @@ public class FoldableComponent extends Container
 		return r;
 	}
 	
-	public void removeOffspring(Component c)
-	{
+	public void removeOffspring(Component c) {
 		offspringPanel.remove(c);
 		if(c instanceof FoldableComponent)
 			if(((FoldableComponent) c).parent == this)
@@ -77,10 +80,8 @@ public class FoldableComponent extends Container
 		recalculateSize();
 	}
 	
-	public void paint(Graphics g)
-	{
-		if(this.offspringPanel.getComponentCount() > 0)
-		{
+	public void paint(Graphics g) {
+		if(this.offspringPanel.getComponentCount() > 0) {
 			if(this.hasFold) foldingButton.setIcon(unpack);
 			else foldingButton.setIcon(pack);
 		}
@@ -89,21 +90,18 @@ public class FoldableComponent extends Container
 	}
 	
 	Dimension preferredSize = new Dimension();
-	public void recalculateSize()
-	{
+	public void recalculateSize() {
 		this.foldingButton.setLocation(0, 0);
 		this.foldingButton.setSize(20, 20);
 		
 		this.foldingObject.setLocation(foldingButton.getWidth(), 0);
 		this.foldingObject.setSize(this.foldingObject.getPreferredSize());
-		if(hasFold)
-		{
+		if(hasFold) {
 			offspringPanel.setVisible(false);;
 			preferredSize.width = this.foldingObject.getPreferredSize().width + foldingButton.getWidth();
 			preferredSize.height = Math.max(this.foldingObject.getPreferredSize().height, this.foldingButton.getHeight());
 		}
-		else
-		{
+		else {
 			offspringPanel.recalculateSize();
 			offspringPanel.setLocation(ident, this.foldingObject.getHeight());
 			offspringPanel.setSize(offspringPanel.getPreferredSize());
@@ -122,13 +120,11 @@ public class FoldableComponent extends Container
 			((RecursivePanel) getParent()).recalculateSize();
 	}
 	
-	public void setBackground(Color bg)
-	{
+	public void setBackground(Color bg) {
 		this.foldingObject.setBackground(bg);
 	}
 	
-	public void setForeground(Color bg)
-	{
+	public void setForeground(Color bg) {
 		this.foldingObject.setForeground(bg);
 	}
 }

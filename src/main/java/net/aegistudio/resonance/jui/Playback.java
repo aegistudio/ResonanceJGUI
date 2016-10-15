@@ -21,7 +21,6 @@ import javax.swing.JPopupMenu;
 import net.aegistudio.resonance.Resonance;
 import net.aegistudio.resonance.jui.history.Action;
 import net.aegistudio.resonance.jui.measure.MeasureRuler;
-import net.aegistudio.resonance.jui.setting.Theme;
 import net.aegistudio.resonance.music.LengthObject;
 
 @SuppressWarnings("serial")
@@ -40,8 +39,12 @@ public class Playback extends Subwindow {
 	
 	Runnable mode = () -> {};
 	
-	public Playback(Theme theme, Resonance resonance, MeasureRuler ruler)
-	{
+	private ImageIcon getMinIcon(ImageIcon component) {
+		if(component == null) return null;
+		return new ImageIcon(component.getImage().getScaledInstance(20, 20, Image.SCALE_REPLICATE));
+	}
+	
+	public Playback(Resonance resonance, MeasureRuler ruler) {
 		super();
 		super.setSize(755, 80);
 		super.setResizable(false);
@@ -49,19 +52,18 @@ public class Playback extends Subwindow {
 		super.setTitle("Playback");
 		
 		this.resonance = resonance;
-		endless = theme.makeIcon("endless.png");
-		stopAtTheEnd = theme.makeIcon("stop_at_the_end.png");
-		loop = theme.makeIcon("loop.png");
 		
-		endlessMin = new ImageIcon(endless.getImage().getScaledInstance(20, 20, Image.SCALE_REPLICATE));
-		stopAtTheEndMin = new ImageIcon(stopAtTheEnd.getImage().getScaledInstance(20, 20, Image.SCALE_REPLICATE));
-		loopMin = new ImageIcon(loop.getImage().getScaledInstance(20, 20, Image.SCALE_REPLICATE));
+		endless = Main.getMain().theme.rawIcon("playback.endless");
+		stopAtTheEnd = Main.getMain().theme.rawIcon("playback.stop@end");
+		loop = Main.getMain().theme.rawIcon("playback.loop");
 		
-		addKeyListener(new KeyAdapter(){
-			public void keyPressed(KeyEvent ke)
-			{
-				if(ke.getKeyCode() == KeyEvent.VK_SPACE)
-				{
+		endlessMin = getMinIcon(endless);
+		stopAtTheEndMin = getMinIcon(stopAtTheEnd);
+		loopMin = getMinIcon(loop);
+		
+		addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent ke) {
+				if(ke.getKeyCode() == KeyEvent.VK_SPACE) {
 					if(play.isVisible())
 						play.doClick();
 					else pause.doClick();
@@ -69,13 +71,10 @@ public class Playback extends Subwindow {
 			}
 		});
 		
-		play = new JButton()
-		{
-			{
+		play = new JButton() { {
 				setToolTipText("Play");
-				setIcon(new ImageIcon("res/play.png"));
-			}
-			{
+				Main.getMain().theme.configure(this, "playback.play");
+				
 				super.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
@@ -90,13 +89,10 @@ public class Playback extends Subwindow {
 		play.setLocation(5, 10);
 		super.add(play);
 		
-		pause = new JButton()
-		{
-			{
+		pause = new JButton() { {
 				setToolTipText("Pause");
-				setIcon(new ImageIcon("res/pause.png"));
-			}
-			{
+				Main.getMain().theme.configure(this, "playback.pause");
+				
 				super.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
@@ -111,13 +107,10 @@ public class Playback extends Subwindow {
 		pause.setLocation(5, 10);
 		super.add(pause);
 		
-		stop = new JButton()
-		{
-			{
+		stop = new JButton() { {
 				setToolTipText("Stop");
-				setIcon(new ImageIcon("res/stop.png"));
-			}
-			{
+				Main.getMain().theme.configure(this, "playback.stop");
+				
 				super.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
@@ -132,10 +125,10 @@ public class Playback extends Subwindow {
 		stop.setLocation(50, 10);
 		super.add(stop);
 		
-		this.playMode = new JButton()
-		{
+		this.playMode = new JButton() {
 			JPopupMenu playModeMenu = new JPopupMenu();
 			JMenuItem endlessItem, stopAtTheEndItem, loopItem;
+			
 			protected void enableAll() {
 				endlessItem.setEnabled(true);
 				stopAtTheEndItem.setEnabled(true);
@@ -204,9 +197,8 @@ public class Playback extends Subwindow {
 				loopItem.setIcon(loopMin);
 				playModeMenu.add(loopItem);
 				
-				addMouseListener(new MouseAdapter(){
-					public void mousePressed(MouseEvent me)
-					{
+				addMouseListener(new MouseAdapter() {
+					public void mousePressed(MouseEvent me) {
 						playModeMenu.show(playMode, me.getX(), me.getY());
 					}
 				});
@@ -377,7 +369,7 @@ public class Playback extends Subwindow {
 	}
 	
 	public void setBeatsPerMinute(float initialBpm, float lastBpm) {
-		Main.getHistory().push(new Action() {
+		Main.getMain().getHistory().push(new Action() {
 			
 			public String toString() {
 				return "Update BPM";
