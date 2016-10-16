@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>resonance-java-ui</name>
+	<name>resonance-jui-arranger</name>
 	<comment>Utilizing core module, the resonance java gui creates DAW (Digital Audio Workstation) for cross platform users. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
 	<projects>
+		<project>resonance-jui-common</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

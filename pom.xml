@@ -2,8 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
      
-	<groupId>net.aegistudio.resonance-jui</groupId>
-	<artifactId>resonance-java-ui</artifactId>
+	<groupId>net.aegistudio.resonance.jui</groupId>
+	<artifactId>resonance-jui</artifactId>
 	<version>1.0</version>
 
 	<repositories>
@@ -46,4 +46,12 @@
 			<type>pom</type>
 		</dependency>
 	</dependencies>
+	<packaging>pom</packaging>
+	<modules>
+		<module>resonance-jui-common</module>
+		<module>resonance-jui-rcmgr</module>
+		<module>resonance-jui-main</module>
+		<module>resonance-jui-arranger</module>
+		<module>resonance-jui-pianoroll</module>
+	</modules>
 </project>
